@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %} Aprobado {% endblock titulo %}
+{% block css %} {% static 'paginas/contestado/css/aprobado.css' %} {% endblock css %}
+
+<link rel='stylesheet' href={% static 'paginas/contestado/css/contestado.css' %}>
+
+{% block contenido %}
+
+    <section class="container">
+        <h1>Aprobado</h1>
+        <form id="info-form">
+
+            <section class='form-group'>
+                <label for="fecha aprobado">Fecha Aprobado:</label>
+                <input type="date" id="fecha_aprobado" value="2023-01-01" min="2023-01-01" max="2025-12-31" />
+            </section>
+
+            <section class='form-group'>
+                <label for="numero orden compra">Número Orden Compra:</label>
+                <input type="number" id="numero_orden_compra" name="numero-orden-compra" required />
+            </section>
+
+            <section class='form-group'>
+                <label for="dato entrega">Datos Entrega:</label>
+                <input type="text" id="dato-entrega" name="dato-entrega" />
+            </section>
+
+            <section class='form-group'>
+                <label for="fecha entrega">Fecha Entrega:</label>
+                <input type="date" id="fecha_entrega" value="2023-01-01" readonly onmousedown="return false;" />
+            </section>
+
+            <section class='form-group'>
+                <label for="cantidad articulos">Cantidad días disponibles:</label>
+                <input type="number" id="cantidad_dias_disponibles" name="cantidad-dias_disponibles" readonly onmousedown="return false;" />
+            </section>
+
+            <!-- Agrega los campos restantes de manera similar -->
+            <button type="reset">Limpiar</button>
+            <button type="submit">Guardar Información</button>
+        </form>
+    </section>
+
+{% endblock contenido %}

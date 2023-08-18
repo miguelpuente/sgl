@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %} Contestado {% endblock titulo %}
+{% block css %} {% static 'paginas/contestado/css/contestado.css' %} {% endblock css %}
+
+<link rel='stylesheet' href={% static 'paginas/contestado/css/contestado.css' %}>
+
+{% block contenido %}
+
+    <section class="container">
+        <h1>Contestado</h1>
+        <form id="info-form">
+
+            <section class='form-group'>
+                <label for="licitacion">N° Licitación:</label>
+                <input type="number" id="licitacion" name="licitacion" required />
+            </section>
+
+            <section class='form-group'>
+                <label for="usuario">Usuario:</label>
+                <input type="text" id="usuario" name="usuario" readonly onmousedown="return false;" />
+            </section>
+
+            <section class='form-group'>
+                <label for="sucursal">Sucursal:</label>
+                <select name='sucursales'>
+                    <option value='Charata'>Charata</option>
+                    <option value='Saenz Peña'>Saenz Peña</option>
+                    <option value='Resistencia'>Resistencia</option>
+                </select>
+            </section>
+
+            <section class='form-group'>
+                <label for="aseguradora">Aseguradora:</label>
+                <select name='aseguradoras'>
+                    <option value='Sancor'>Sancor</option>
+                    <option value='La Segunda'>La Segunda</option>
+                    <option value='San Cristobal'>San Cristobal</option>
+                </select>
+            </section>
+
+            <section class='form-group'>
+                <label for="perito">Perito:</label>
+                <select name='peritos'>
+                    <option value='Perito 1'>Perito 1</option>
+                    <option value='Perito 2'>Perito 2</option>
+                    <option value='Perito 3'>Perito 3</option>
+                </select>
+            </section>
+
+            <section class='form-group'>
+                <label for="fecha contestado">Fecha Contestado:</label>
+                <input type="date" id="fecha_contestado" value="2023-01-01" min="2023-01-01" max="2025-12-31" />
+            </section>
+
+            <section class='form-group'>
+                <label for="demora entrega">Demora Entrega</label>
+                <select name='demoras'>
+                    <option value='hilux'>Hilux</option>
+                    <option value='corolla'>Corolla</option>
+                    <option value='etios'>Etios</option>
+                </select>
+            </section>
+
+            <section class='form-group'>
+                <label for="vehiculo">Vehículo:</label>
+                <select name='vehiculos'>
+                    <option value='hilux'>Hilux</option>
+                    <option value='corolla'>Corolla</option>
+                    <option value='etios'>Etios</option>
+                </select>
+            </section>
+
+            <section class='form-group'>
+                <label for="dominio">Dominio:</label>
+                <input type="text" id="dominio" name="dominio" required />
+            </section>
+
+            <section class='form-group'>
+                <label for="numero presupuesto">Número Presupuesto:</label>
+                <input type="number" id="numero_presupuesto" name="numero-presupuesto" required />
+            </section>
+
+            <section class='form-group'>
+                <label for="numero siniestro">Número Siniestro:</label>
+                <input type="number" id="numero_siniestro" name="numero-siniestro" required />
+            </section>
+
+            <section class='form-group'>
+                <label for="cantidad articulos">Cantidad Artículos:</label>
+                <input type="number" id="cantidad_articulo" name="cantidad-articulo" required />
+            </section>
+
+            <section class='form-group'>
+                <label for="monto">Monto:</label>
+                <input type="number" id="monto" name="monto" step="any" required />
+            </section>
+
+            <section class='form-group'>
+                <label for="provincia">Provincia:</label>
+                <select name='provincias'>
+                    <option value='Provincia 1'>Provincia 1</option>
+                    <option value='Provincia 2'>Provincia 2</option>
+                    <option value='Provincia 3'>Provincia 3</option>
+                </select>
+            </section>
+
+            <section class='form-group'>
+                <label for="localidad">Localidad:</label>
+                <select name='localidades'>
+                    <option value='Pueblo 1'>Pueblo 1</option>
+                    <option value='Pueblo 2'>Pueblo 2</option>
+                    <option value='Pueblo 3'>Pueblo 3</option>
+                </select>
+            </section>
+
+            <section class='form-group'>
+                <label for="costo_transporte">Costo Transporte:</label>
+                <input type="number" id="costo_transporte" name="costo_transporte" step="any" required />
+            </section>
+
+            <section class='form-group'>
+                <label for="activo">Activo:</label>
+                <input type="checkbox" id="activo" name="activo" checked />
+            </section>
+
+            <!-- Agrega los campos restantes de manera similar -->
+            <button type="reset">Limpiar</button>
+            <button type="submit">Guardar Información</button>
+        </form>
+    </section>
+
+{% endblock contenido %}
