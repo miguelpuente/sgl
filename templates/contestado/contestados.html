@@ -2,133 +2,103 @@
 {% load static %}
 
 {% block titulo %} Contestado {% endblock titulo %}
-{% block css %} {% static 'paginas/contestado/css/contestado.css' %} {% endblock css %}
-
-<link rel='stylesheet' href={% static 'paginas/contestado/css/contestado.css' %}>
+{% block css %} {% static 'paginas/contestado/css/contestados.css' %} {% endblock css %}
 
 {% block contenido %}
 
     <section class="container">
-        <h1>Contestado</h1>
-        <form id="info-form">
+        <section class='formulario'>
+            <h2>Contestado</h2>
+            <form action='#' id="formulario">
+                <section class='form-group'>
+                    {% comment %} <label for="licitacion">N° Licitación:</label> {% endcomment %}
+                    <input type="number" placeholder='Licitación' required />
 
-            <section class='form-group'>
-                <label for="licitacion">N° Licitación:</label>
-                <input type="number" id="licitacion" name="licitacion" required />
+                    {% comment %} <label for="sucursal">Sucursal:</label> {% endcomment %}
+                    <select name='sucursales'>
+                        <option hidden selected>Sucursal</option>
+                        <option value='Charata'>Charata</option>
+                        <option value='Saenz Peña'>Saenz Peña</option>
+                        <option value='Resistencia'>Resistencia</option>
+                    </select>
+                    <input type="date" id="fecha_contestado" value="2023-01-01" min="2023-01-01" max="2025-12-31" />
+                </section>
+
+                <section class='form-group'>
+                    {% comment %} <label for="aseguradora">Aseguradora:</label> {% endcomment %}
+                    <input type="number" placeholder='Siniestro' required />
+                    <select name='aseguradoras'>
+                        <option hidden selected>Aseguradora</option>
+                        <option value='Sancor'>Sancor</option>
+                        <option value='La Segunda'>La Segunda</option>
+                        <option value='San Cristobal'>San Cristobal</option>
+                    </select>
+                    <select name='peritos'>
+                        <option hidden selected>Perito</option>
+                        <option value='Perito 1'>Perito 1</option>
+                        <option value='Perito 2'>Perito 2</option>
+                        <option value='Perito 3'>Perito 3</option>
+                    </select>
+                </section>
+
+                <section class='form-group'>
+                    <input type="text" placeholder='Dominio' required />
+                    <select name='vehiculos'>
+                        <option hidden selected>Vehículo</option>
+                        <option value='hilux'>Hilux</option>
+                        <option value='corolla'>Corolla</option>
+                        <option value='etios'>Etios</option>
+                    </select>
+                    <select name='demoras'>
+                        <option hidden selected>Demora</option>
+                        <option value='1-5'>1-5</option>
+                        <option value='6-10'>6-10</option>
+                        <option value='11-15'>11-15</option>
+                    </select>
+                </section>
+
+                <section class='form-group'>
+                    <input type="number" placeholder='Presupuesto' required />
+                    <input type="number" placeholder='N° Artículos' required />
+                    <input type="number" placeholder='Monto' step="any" required />
+                </section>
+
+                <section class='form-group'>
+                    <select name='provincias'>
+                        <option hidden selected>Provincia</option>
+                        <option value='Provincia 1'>Provincia 1</option>
+                        <option value='Provincia 2'>Provincia 2</option>
+                        <option value='Provincia 3'>Provincia 3</option>
+                    </select>
+                    <select name='localidades'>
+                        <option hidden selected>Localidad</option>
+                        <option value='Pueblo 1'>Pueblo 1</option>
+                        <option value='Pueblo 2'>Pueblo 2</option>
+                        <option value='Pueblo 3'>Pueblo 3</option>
+                    </select>
+                    <input type="number" placeholder='Transporte' step="any" required />
+                </section>
+
+                <section class='form-group'>
+                    <label for="activo">Activo:</label>
+                    <input type="checkbox" id="activo" name="activo" checked />
+                    <label for="activo">Aprobado:</label>
+                    <input type="checkbox" id="aprobado" name="aprobado" />
+                </section>
+
+                <!-- Agrega los campos restantes de manera similar -->
+                <section class='form-group'>
+                    <button type="reset">Limpiar</button>
+                    <button type="submit">Guardar</button>
+                </section>
+            </form>
+        </section>
+        <section class='listado'>
+            <h2>Listado</h2>
+            <section class='listado-contestados'>
+
             </section>
-
-            <section class='form-group'>
-                <label for="usuario">Usuario:</label>
-                <input type="text" id="usuario" name="usuario" readonly onmousedown="return false;" />
-            </section>
-
-            <section class='form-group'>
-                <label for="sucursal">Sucursal:</label>
-                <select name='sucursales'>
-                    <option value='Charata'>Charata</option>
-                    <option value='Saenz Peña'>Saenz Peña</option>
-                    <option value='Resistencia'>Resistencia</option>
-                </select>
-            </section>
-
-            <section class='form-group'>
-                <label for="aseguradora">Aseguradora:</label>
-                <select name='aseguradoras'>
-                    <option value='Sancor'>Sancor</option>
-                    <option value='La Segunda'>La Segunda</option>
-                    <option value='San Cristobal'>San Cristobal</option>
-                </select>
-            </section>
-
-            <section class='form-group'>
-                <label for="perito">Perito:</label>
-                <select name='peritos'>
-                    <option value='Perito 1'>Perito 1</option>
-                    <option value='Perito 2'>Perito 2</option>
-                    <option value='Perito 3'>Perito 3</option>
-                </select>
-            </section>
-
-            <section class='form-group'>
-                <label for="fecha contestado">Fecha Contestado:</label>
-                <input type="date" id="fecha_contestado" value="2023-01-01" min="2023-01-01" max="2025-12-31" />
-            </section>
-
-            <section class='form-group'>
-                <label for="demora entrega">Demora Entrega</label>
-                <select name='demoras'>
-                    <option value='hilux'>Hilux</option>
-                    <option value='corolla'>Corolla</option>
-                    <option value='etios'>Etios</option>
-                </select>
-            </section>
-
-            <section class='form-group'>
-                <label for="vehiculo">Vehículo:</label>
-                <select name='vehiculos'>
-                    <option value='hilux'>Hilux</option>
-                    <option value='corolla'>Corolla</option>
-                    <option value='etios'>Etios</option>
-                </select>
-            </section>
-
-            <section class='form-group'>
-                <label for="dominio">Dominio:</label>
-                <input type="text" id="dominio" name="dominio" required />
-            </section>
-
-            <section class='form-group'>
-                <label for="numero presupuesto">Número Presupuesto:</label>
-                <input type="number" id="numero_presupuesto" name="numero-presupuesto" required />
-            </section>
-
-            <section class='form-group'>
-                <label for="numero siniestro">Número Siniestro:</label>
-                <input type="number" id="numero_siniestro" name="numero-siniestro" required />
-            </section>
-
-            <section class='form-group'>
-                <label for="cantidad articulos">Cantidad Artículos:</label>
-                <input type="number" id="cantidad_articulo" name="cantidad-articulo" required />
-            </section>
-
-            <section class='form-group'>
-                <label for="monto">Monto:</label>
-                <input type="number" id="monto" name="monto" step="any" required />
-            </section>
-
-            <section class='form-group'>
-                <label for="provincia">Provincia:</label>
-                <select name='provincias'>
-                    <option value='Provincia 1'>Provincia 1</option>
-                    <option value='Provincia 2'>Provincia 2</option>
-                    <option value='Provincia 3'>Provincia 3</option>
-                </select>
-            </section>
-
-            <section class='form-group'>
-                <label for="localidad">Localidad:</label>
-                <select name='localidades'>
-                    <option value='Pueblo 1'>Pueblo 1</option>
-                    <option value='Pueblo 2'>Pueblo 2</option>
-                    <option value='Pueblo 3'>Pueblo 3</option>
-                </select>
-            </section>
-
-            <section class='form-group'>
-                <label for="costo_transporte">Costo Transporte:</label>
-                <input type="number" id="costo_transporte" name="costo_transporte" step="any" required />
-            </section>
-
-            <section class='form-group'>
-                <label for="activo">Activo:</label>
-                <input type="checkbox" id="activo" name="activo" checked />
-            </section>
-
-            <!-- Agrega los campos restantes de manera similar -->
-            <button type="reset">Limpiar</button>
-            <button type="submit">Guardar Información</button>
-        </form>
+        </section>
     </section>
 
 {% endblock contenido %}
