@@ -1,0 +1,16 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block titulo %}
+SGL | Eliminación de Licitación
+{% endblock titulo %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/lib/datatable/dataTables.bootstrap.min.css' %}">
+{% endblock extra_css %}
+{% block body %}
+
+    <form method='post'>
+        {% csrf_token %}
+        <p><strong>¿Desea eliminar la licitación del siniestro N° {{ object }}?</strong></p>
+        <button type='submit' class='btn btn-danger'>Confirmar</button>
+    </form>
+{% endblock body %}

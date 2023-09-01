@@ -2,43 +2,73 @@
 {% load static %}
 
 {% block titulo %} Aprobado {% endblock titulo %}
-{% block css %} {% static 'paginas/contestado/css/aprobado.css' %} {% endblock css %}
+{% block css %} {% static 'paginas/aprobado/css/aprobados.css' %} {% endblock css %}
 
 {% block contenido %}
 
     <section class="container">
-        <h1>Aprobado</h1>
-        <form id="info-form">
+        <section class='formulario'>
+            <h2>Aprobado</h2>
+            <form action='registrarContestado/' method='POST' id="info-form">
 
-            <section class='form-group'>
-                <label for="fecha aprobado">Fecha Aprobado:</label>
-                <input type="date" id="fecha_aprobado" value="2023-01-01" min="2023-01-01" max="2025-12-31" />
+                <section class='form-group'>
+                    {% comment %} <label for="fecha aprobado">Fecha Aprobado:</label> {% endcomment %}
+                    <input type="date" name="fecha_aprobado" id="fecha_aprobado" value="2023-01-01" min="2023-01-01" max="2025-12-31" />
+
+                    {% comment %} <label for="numero orden compra">Número Orden Compra:</label> {% endcomment %}
+                    <input type="number" id="numero_orden_compra" name="numero-orden-compra" placeholder='N° Orden Compra' required />
+
+                    {% comment %} <label for="dato entrega">Datos Entrega:</label> {% endcomment %}
+                    <input type="text" id="dato-entrega" name="dato-entrega" placeholder='Datos de Entrega'/>
+
+                </section>
+                <section class='form-group'>
+
+                    <label for="fecha entrega">Fecha Entrega:</label>
+                    <input type="date" id="fecha_entrega" value="2023-01-01" readonly onmousedown="return false;" />
+
+                    {% comment %} <label for="cantidad articulos">Cantidad días disponibles:</label> {% endcomment %}
+                    <input type="number" id="cantidad_dias_disponibles" name="cantidad-dias_disponibles" placeholder='Dias Disponibles' readonly onmousedown="return false;" />
+                </section>
+
+                <!-- Agrega los campos restantes de manera similar -->
+                <section class='form-group'>
+                    <button type="reset" id='limpiar'>Limpiar</button>
+                    <button type="submit" id='guardar'>Guardar</button>
+                </section>
+            </form>
+        </section>
+                <section class='listado'>
+            <h2>Listado</h2>
+            <section class='listado-contestados'>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Siniestro</th>
+                            <th>Dominio</th>
+                            <th>Aseguradora</th>
+                            <th>Usuario</th>
+                            <th>Monto-monto+transporte-</th>
+                            <th colspan='2'>Opciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for contestado in object_list %}
+
+                            <tr>
+                                <td>{{ contestado.numero_siniestro }}</td>
+                                <td>{{ contestado.dominio }}</td>
+                                <td>{{ contestado.id_aseguradora }}</td>
+                                <td>{{ contestado.id_sucursal }}</td>
+                                <td><a href= {% url 'editarContestado' id=contestado.id %} >Editar</a></td>
+                                <td><a href= {% url 'eliminarContestado' id=contestado.id %} >Eliminar</a></td>
+                            </tr>
+
+                        {% endfor %}
+                    </tbody>
+                </table>
             </section>
-
-            <section class='form-group'>
-                <label for="numero orden compra">Número Orden Compra:</label>
-                <input type="number" id="numero_orden_compra" name="numero-orden-compra" required />
-            </section>
-
-            <section class='form-group'>
-                <label for="dato entrega">Datos Entrega:</label>
-                <input type="text" id="dato-entrega" name="dato-entrega" />
-            </section>
-
-            <section class='form-group'>
-                <label for="fecha entrega">Fecha Entrega:</label>
-                <input type="date" id="fecha_entrega" value="2023-01-01" readonly onmousedown="return false;" />
-            </section>
-
-            <section class='form-group'>
-                <label for="cantidad articulos">Cantidad días disponibles:</label>
-                <input type="number" id="cantidad_dias_disponibles" name="cantidad-dias_disponibles" readonly onmousedown="return false;" />
-            </section>
-
-            <!-- Agrega los campos restantes de manera similar -->
-            <button type="reset">Limpiar</button>
-            <button type="submit">Guardar Información</button>
-        </form>
+        </section>
     </section>
 
 {% endblock contenido %}

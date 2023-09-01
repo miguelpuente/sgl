@@ -1,0 +1,78 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block titulo %}
+    SGL | Listado de Contestados
+{% endblock titulo %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/lib/datatable/dataTables.bootstrap.min.css' %}">
+{% endblock extra_css %}
+{% block body %}
+    <div>
+        <button class='btn btn-primary' type='button' onclick="abrir_modal_creacion('{% url 'crear_contestado' %}')">Crear Licitación</button>
+    </div>
+    {% if contestados %}
+        <div class="card">
+            <div class="card-header">
+                <strong class="card-title">Listado de Contestados</strong>
+            </div>
+
+            <div class="table-stats order-table ov-h">
+                <table id="tabla_libros" class="table">
+                    <thead>
+                        <tr>
+                            <th>Siniestro</th>
+                            <th>Dominio</th>
+                            <th>Aseguradora</th>
+                            <th>Usuario</th>
+                            <th>Presupuesto</th>
+                            <th>Opciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for contestado in contestados %}
+                        
+                            <tr>
+                                    <td>{{ contestado.numero_siniestro }}</td>
+                                    <td>{{ contestado.dominio }}</td>
+                                    <td>{{ contestado.aseguradora.nombre }}</td>
+                                    <td>{{ contestado.sucursal.nombre }}</td>
+                                    <td>{{ contestado.numero_presupuesto }}</td>
+                                    <td>
+                                        <button onclick="abrir_modal_edicion('{% url 'actualizar_contestado' contestado.id %}')" class='btn btn-primary'>Editar</button>
+                                        <a href= {% url 'eliminar_contestado' contestado.id %} class='btn btn-danger'>Eliminar</a>
+                                    </td>
+                                </tr>
+                        
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% else %}
+        <h2>No hay contestados pendientes de aprobación</h2>
+    {% endif %}
+
+    <div class='modal fade' id='creacion' role='dialog'>
+
+    </div>
+
+    <div class='modal fade' id='edicion' role='dialog'>
+
+    </div>
+
+{% endblock body %}
+{% block extrajs %}
+    <script type="text/javascript">
+        var $ = JQuery.noConflict();
+        function abrir_modal_edicion(url){
+            $('#edicion').load(url, function (){
+                $(this).modal('show');
+            });
+        }
+        function abrir_modal_creacion(url){
+            $('#creacion').load(url, function (){
+                $(this).modal('show');
+            });
+        }
+    </script>
+{% endblock extrajs %}

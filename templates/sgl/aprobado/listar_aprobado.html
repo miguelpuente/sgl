@@ -1,0 +1,57 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block titulo %}
+    SGL | Listado de Contestados
+{% endblock titulo %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/lib/datatable/dataTables.bootstrap.min.css' %}">
+{% endblock extra_css %}
+{% block body %}
+    {% if aprobados %}
+        <div class="card">
+            <div class="card-header">
+                <strong class="card-title">Listado de Aprobados</strong>
+            </div>
+
+            <div class="table-stats order-table ov-h">
+                <table id="tabla_libros" class="table">
+                    <thead>
+                        <tr>
+                            <th>Siniestro</th>
+                            <th>Dominio</th>
+                            <th>Aseguradora</th>
+                            <th>Usuario</th>
+                            <th>Monto</th>
+                            <th>Opciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for aprobado in aprobados %}
+                        
+                            <tr>
+                                    <td>{{ aprobado.numero_siniestro }}</td>
+                                    <td>{{ aprobado.dominio }}</td>
+                                    <td>{{ aprobado.aseguradora.nombre }}</td>
+                                    <td>{{ aprobado.usuario }}</td>
+                                    <td>{{ aprobado.monto }}</td>
+                                    <td>
+                                        <a href= {% url 'actualizar_aprobado' aprobado.id %} class='btn btn-primary'>Editar</a>
+                                        <a href= {% url 'eliminar_aprobado' aprobado.id %} class='btn btn-danger'>Eliminar</a>
+                                    </td>
+                                </tr>
+                        
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% else %}
+        <h2>No hay contestados pendientes de aprobación</h2>
+    {% endif %}
+
+{% endblock body %}
+{% block extrajs %}
+<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+<script src="{% static 'js/lib/data-table/dataTables.bootstrap.min.js' %}"></script>
+<script src="{% static 'js/libro/libro.js' %}"></script>
+{% endblock extrajs %}
