@@ -127,6 +127,8 @@ class Licitacion(models.Model):
     )
     localidad = models.ForeignKey(
         Localidad, on_delete=models.CASCADE, null=True, blank=True)
+    provincia = models.ForeignKey(
+        Provincia, on_delete=models.CASCADE, null=True, blank=True)
     datos_entrega = models.ForeignKey(
         DatoEntrega, on_delete=models.CASCADE, null=True, blank=True)
     estado = models.CharField(
@@ -149,7 +151,7 @@ class Licitacion(models.Model):
     comentarios_envio = models.TextField(null=True, blank=True)
     dominio = models.CharField(max_length=7, null=True, blank=True)
     numero_presupuesto = models.BigIntegerField(null=True, blank=True)
-    numero_siniestro = models.BigIntegerField(null=True, blank=True)
+    numero_siniestro = models.BigIntegerField(unique=True)
     numero_orden_compra = models.BigIntegerField(null=True, blank=True)
     numero_nota_pedido = models.BigIntegerField(null=True, blank=True)
     cantidad_articulos = models.IntegerField(null=True, blank=True)
@@ -157,6 +159,8 @@ class Licitacion(models.Model):
     monto = models.FloatField(null=True, blank=True)
     costo_transporte = models.FloatField(null=True, blank=True)
     remito = models.ImageField(upload_to='remitos/', null=True, blank=True)
+    enviado = models.BooleanField(default=False)
+    preparado = models.BooleanField(default=False)
     aprobado = models.BooleanField(default=False)
     activo = models.BooleanField(default=True)
     create_at = models.DateField(auto_now_add=True)

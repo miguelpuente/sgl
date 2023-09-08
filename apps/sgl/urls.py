@@ -20,7 +20,11 @@ urlpatterns = [
     path('eliminar_aprobado/<uuid:pk>/',
          login_required(views.AprobadoDeleteView.as_view()), name='eliminar_aprobado'),
 
-    path('preparado/', login_required(views.PreparacionView.as_view()), name='preparado'),
-    path('listo-enviar/', login_required(views.ListoEnviarView.as_view()),
-         name='listo_enviar'),
+    path('listar_preparado/', login_required(views.PreparadoListView.as_view()),
+         name='listar_preparado'),
+    path('actualizar_preparado/<uuid:pk>/',
+         login_required(views.PreparadoUpdateView.as_view()), name='actualizar_preparado'),
+
+    path('listar_listo_enviar/', login_required(views.ListoEnviarListView.as_view()),
+         name='listar_listo_enviar'),
 ]

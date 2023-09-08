@@ -1,19 +1,16 @@
 {% extends 'index.html' %}
 {% load static %}
 {% block titulo %}
-    SGL | Listado de Contestados
+    SGL | Listado en Preparación
 {% endblock titulo %}
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/lib/datatable/dataTables.bootstrap.min.css' %}">
 {% endblock extra_css %}
 {% block body %}
-    <div>
-        <button class='btn btn-primary' type='button' onclick="abrir_modal_creacion('{% url 'crear_contestado' %}')">Crear Licitación</button>
-    </div>
-    {% if contestados %}
+    {% if preparados %}
         <div class="card">
             <div class="card-header">
-                <strong class="card-title">Listado de Contestados</strong>
+                <strong class="card-title">Listado en Preparación</strong>
             </div>
 
             <div class="table-stats order-table ov-h">
@@ -23,23 +20,23 @@
                             <th>Siniestro</th>
                             <th>Dominio</th>
                             <th>Aseguradora</th>
+                            <th>Usuario</th>
                             <th>Presupuesto</th>
-                            <th>Fecha Contestado</th>
                             <th>Opciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for contestado in contestados %}
+                        {% for preparado in preparados %}
                         
                             <tr>
-                                    <td>{{ contestado.numero_siniestro }}</td>
-                                    <td>{{ contestado.dominio }}</td>
-                                    <td>{{ contestado.aseguradora.nombre }}</td>
-                                    <td>{{ contestado.numero_presupuesto }}</td>
-                                    <td>{{ contestado.fecha_contestado }}</td>
+                                    <td>{{ preparado.numero_siniestro }}</td>
+                                    <td>{{ preparado.dominio }}</td>
+                                    <td>{{ preparado.aseguradora.nombre }}</td>
+                                    <td>{{ preparado.sucursal.nombre }}</td>
+                                    <td>{{ preparado.numero_presupuesto }}</td>
                                     <td>
-                                        <button onclick="abrir_modal_edicion('{% url 'actualizar_contestado' contestado.id %}')" class='btn btn-primary'>Editar</button>
-                                        <a href= {% url 'eliminar_contestado' contestado.id %} class='btn btn-danger'>Eliminar</a>
+                                        <button onclick="abrir_modal_edicion('{% url 'actualizar_preparado' preparado.id %}')" class='btn btn-primary'>Editar</button>
+                                        <a href= {% url 'eliminar_contestado' preparado.id %} class='btn btn-danger'>Eliminar</a>
                                     </td>
                                 </tr>
                         

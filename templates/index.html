@@ -54,13 +54,13 @@
                     <li class="menu-item-has-children dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-wrench"></i>En Preparación</a>
                         <ul class="sub-menu children dropdown-menu">                            
-                            <li><i class="fa fa-table"></i><a href="#">Listado de en preparación</a></li>
+                            <li><i class="fa fa-table"></i><a href={% url 'listar_preparado' %}>Listado en preparación</a></li>
                         </ul>
                      </li> 
                     <li class="menu-item-has-children dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-truck"></i>Listo para Enviar</a>
                         <ul class="sub-menu children dropdown-menu">                            
-                            <li><i class="fa fa-table"></i><a href="#">Listado de listo para enviar</a></li>
+                            <li><i class="fa fa-table"></i><a href={% url 'listar_listo_enviar'%}>Listado de listo para enviar</a></li>
                         </ul>
                      </li>
                     <li class="menu-item-has-children dropdown">

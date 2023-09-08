@@ -1,12 +1,12 @@
 <div class='modal-dialog modal-lg' role='document'>
     <div class='modal-content'>
         <div class='modal-header'>
-            <h2 class='modal-title'>Crear Contestado {{ object.numero_siniestro }}</h2>
+            <h2 class='modal-title'>Crear Licitación</h2>
             <button class='close' type='button' data-dismiss='modal' aria-label='Close'>
                 <span aria-hidden='true'>&times;</span>
             </button>
         </div>
-        <form id="form_edicion" action="{% url 'crear_contestado' %}" method="POST" enctype="multipart/form-data">
+        <form action="{% url 'crear_contestado' %}" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             <div class='modal-body'>
                 <div id="erroresEdicion">

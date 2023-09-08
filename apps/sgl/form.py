@@ -6,7 +6,7 @@ class ContestadoForm(forms.ModelForm):
     class Meta:
         model = Licitacion
         fields = ['aprobado', 'fecha_contestado', 'numero_siniestro', 'aseguradora', 'perito', 'dominio', 'vehiculo',
-                  'dias_demora', 'numero_presupuesto', 'cantidad_articulos', 'monto', 'localidad', 'costo_transporte']
+                  'dias_demora', 'numero_presupuesto', 'cantidad_articulos', 'monto', 'provincia', 'localidad', 'costo_transporte']
         labels = {
             'aprobado': 'Aprobado',
             'fecha_contestado': 'Fecha contestado',
@@ -19,6 +19,7 @@ class ContestadoForm(forms.ModelForm):
             'numero_presupuesto': 'N° Presupuesto',
             'cantidad_articulos': 'Cantidad de Artículos',
             'monto': 'Monto',
+            'provincia': 'Provincia',
             'localidad': 'Localidad',
             'costo_transporte': 'Costo Transporte',
         }
@@ -104,6 +105,13 @@ class ContestadoForm(forms.ModelForm):
                     'required': 'true'
                 }
             ),
+            'provincia': forms.Select(
+                attrs={
+                    'class': 'form-control',
+                    'id': 'provincia',
+                    'required': 'true',
+                }
+            ),
             'localidad': forms.Select(
                 attrs={
                     'class': 'form-control',
@@ -127,15 +135,18 @@ class AprobadoForm(forms.ModelForm):
     class Meta:
         model = Licitacion
         fields = ['aprobado', 'fecha_aprobado',
-                  'numero_orden_compra', 'fecha_entrega_pactada']
+                  'numero_orden_compra']
         labels = {
             'aprobado': 'Aprobado',
             'fecha_aprobado': 'Fecha Aprobado',
             'numero_orden_compra': 'N° Orden Compra',
-            'fecha_entrega_pactada': 'Fecha Entrega Pactada',
         }
         widgets = {
-            'aprobado': forms.CheckboxInput(),
+            'aprobado': forms.CheckboxInput(
+                attrs={
+                    'class': 'form-control',
+                }
+            ),
             'fecha_aprobado': forms.SelectDateWidget(
                 attrs={
                     'input_type': 'date',
@@ -153,13 +164,55 @@ class AprobadoForm(forms.ModelForm):
                     'required': 'true'
                 }
             ),
+        }
+
+
+class PreparadoForm(forms.ModelForm):
+    class Meta:
+        model = Licitacion
+        fields = ['preparado', 'fecha_preparacion', 'fecha_entrega_pactada',
+                  'comentarios_preparacion', 'numero_nota_pedido']
+        labels = {
+            'preparado': 'Preparado',
+            'fecha_preparacion': 'Fecha Preparación',
+            'fecha_entrega_pactada': 'Fecha Entrega',
+            'comentarios_preparacion': 'Comentarios Preparación',
+            'numero_nota_pedido': 'Número Nota Pedido',
+        }
+        widgets = {
+            'preparado': forms.CheckboxInput(
+                attrs={
+                    'class': 'form-control',
+                }
+            ),
+            'fecha_preparacion': forms.SelectDateWidget(
+                attrs={
+                    'input_type': 'date',
+                    'class': 'form-control',
+                    'id': 'fecha_preparacion',
+                    'readonly': 'readonly',
+                }
+            ),
             'fecha_entrega_pactada': forms.SelectDateWidget(
                 attrs={
                     'input_type': 'date',
                     'class': 'form-control',
-                    'id': 'fecha_entrega_pactada',
-                    'placeholder': '2023-12-01',
-                    'required': 'true'
+                    'id': 'fecha_entrega',
+                    'readonly': 'readonly',
+                }
+            ),
+            'comentarios_preparacion': forms.Textarea(
+                attrs={
+                    'class': 'form-control',
+                    'placeholder': 'Comentario',
+                    'id': 'comentario',
+                }
+            ),
+            'numero_nota_pedido': forms.NumberInput(
+                attrs={
+                    'class': 'form-control',
+                    'id': 'numero_nota_pedido',
+                    'placeholder': 'N° Nota de pedido'
                 }
             ),
         }

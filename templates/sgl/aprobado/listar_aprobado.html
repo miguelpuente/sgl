@@ -20,8 +20,10 @@
                             <th>Siniestro</th>
                             <th>Dominio</th>
                             <th>Aseguradora</th>
-                            <th>Usuario</th>
                             <th>Monto</th>
+                            <th>Provincia</th>
+                            <th>Localidad</th>
+                            <th>Usuario</th>
                             <th>Opciones</th>
                         </tr>
                     </thead>
@@ -32,10 +34,12 @@
                                     <td>{{ aprobado.numero_siniestro }}</td>
                                     <td>{{ aprobado.dominio }}</td>
                                     <td>{{ aprobado.aseguradora.nombre }}</td>
-                                    <td>{{ aprobado.usuario }}</td>
                                     <td>{{ aprobado.monto }}</td>
+                                    <td>{{ aprobado.provincia }}</td>
+                                    <td>{{ aprobado.localidad }}</td>
+                                    <td>{{ aprobado.usuario }}</td>
                                     <td>
-                                        <a href= {% url 'actualizar_aprobado' aprobado.id %} class='btn btn-primary'>Editar</a>
+                                        <button onclick = "abrir_modal_edicion('{% url 'actualizar_aprobado' aprobado.id %}')" class='btn btn-primary'>Editar</button>
                                         <a href= {% url 'eliminar_aprobado' aprobado.id %} class='btn btn-danger'>Eliminar</a>
                                     </td>
                                 </tr>
@@ -49,9 +53,18 @@
         <h2>No hay contestados pendientes de aprobación</h2>
     {% endif %}
 
+    <div class='modal fade' id='edicion' role='dialog'>
+
+    </div>
+
 {% endblock body %}
 {% block extrajs %}
-<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
-<script src="{% static 'js/lib/data-table/dataTables.bootstrap.min.js' %}"></script>
-<script src="{% static 'js/libro/libro.js' %}"></script>
+    <script type="text/javascript">
+        var $ = JQuery.noConflict();
+        function abrir_modal_edicion(url){
+            $('#edicion').load(url, function (){
+                $(this).modal('show');
+            });
+        }
+    </script>
 {% endblock extrajs %}

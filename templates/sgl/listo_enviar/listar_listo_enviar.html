@@ -1,19 +1,16 @@
 {% extends 'index.html' %}
 {% load static %}
 {% block titulo %}
-    SGL | Listado de Contestados
+    SGL | Listado de Listos para Enviar
 {% endblock titulo %}
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/lib/datatable/dataTables.bootstrap.min.css' %}">
 {% endblock extra_css %}
 {% block body %}
-    <div>
-        <button class='btn btn-primary' type='button' onclick="abrir_modal_creacion('{% url 'crear_contestado' %}')">Crear Licitación</button>
-    </div>
-    {% if contestados %}
+    {% if listos %}
         <div class="card">
             <div class="card-header">
-                <strong class="card-title">Listado de Contestados</strong>
+                <strong class="card-title">Listado de Listos para Enviar</strong>
             </div>
 
             <div class="table-stats order-table ov-h">
@@ -23,23 +20,27 @@
                             <th>Siniestro</th>
                             <th>Dominio</th>
                             <th>Aseguradora</th>
-                            <th>Presupuesto</th>
-                            <th>Fecha Contestado</th>
+                            <th>Monto</th>
+                            <th>Provincia</th>
+                            <th>Localidad</th>
+                            <th>Usuario</th>
                             <th>Opciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for contestado in contestados %}
+                        {% for listo in listos %}
                         
                             <tr>
-                                    <td>{{ contestado.numero_siniestro }}</td>
-                                    <td>{{ contestado.dominio }}</td>
-                                    <td>{{ contestado.aseguradora.nombre }}</td>
-                                    <td>{{ contestado.numero_presupuesto }}</td>
-                                    <td>{{ contestado.fecha_contestado }}</td>
+                                    <td>{{ listo.numero_siniestro }}</td>
+                                    <td>{{ listo.dominio }}</td>
+                                    <td>{{ listo.aseguradora.nombre }}</td>
+                                    <td>{{ listo.monto }}</td>
+                                    <td>{{ listo.provincia }}</td>
+                                    <td>{{ listo.localidad }}</td>
+                                    <td>{{ listo.usuario }}</td>
                                     <td>
-                                        <button onclick="abrir_modal_edicion('{% url 'actualizar_contestado' contestado.id %}')" class='btn btn-primary'>Editar</button>
-                                        <a href= {% url 'eliminar_contestado' contestado.id %} class='btn btn-danger'>Eliminar</a>
+                                        <button onclick = "abrir_modal_edicion('{% url 'actualizar_aprobado' listo.id %}')" class='btn btn-primary'>Editar</button>
+                                        <a href= {% url 'eliminar_aprobado' listo.id %} class='btn btn-danger'>Eliminar</a>
                                     </td>
                                 </tr>
                         
@@ -49,12 +50,8 @@
             </div>
         </div>
     {% else %}
-        <h2>No hay contestados pendientes de aprobación</h2>
+        <h2>No hay pendientes de envío</h2>
     {% endif %}
-
-    <div class='modal fade' id='creacion' role='dialog'>
-
-    </div>
 
     <div class='modal fade' id='edicion' role='dialog'>
 
@@ -66,11 +63,6 @@
         var $ = JQuery.noConflict();
         function abrir_modal_edicion(url){
             $('#edicion').load(url, function (){
-                $(this).modal('show');
-            });
-        }
-        function abrir_modal_creacion(url){
-            $('#creacion').load(url, function (){
                 $(this).modal('show');
             });
         }

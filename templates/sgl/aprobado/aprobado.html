@@ -4,9 +4,9 @@
             <button class='close' type='button' data-dismiss='modal' aria-label='Close'>
                 <span aria-hidden='true'>&times;</span>
             </button>
-            <h2 class='modal-title'>Edición Contestado -- Siniestro N° {{ object.numero_siniestro }}</h2>
+            <h2 class='modal-title'>Edición Aprobado -- Siniestro N° {{ object.numero_siniestro }}</h2>
         </div>
-        <form id="form_edicion" action="{% url 'actualizar_contestado' object.id %}" method="POST" enctype="multipart/form-data">
+        <form id="form_edicion" action="{% url 'actualizar_aprobado' object.id %}" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             <div class='modal-body'>
                 <div id="erroresEdicion">

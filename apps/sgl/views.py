@@ -1,10 +1,9 @@
-from typing import Any, Dict
-from django.db.models.query import QuerySet
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
+from datetime import datetime, timedelta
 from django.views.generic import View, TemplateView, ListView, UpdateView, CreateView, DeleteView
 from .models import Licitacion
-from .form import ContestadoForm, AprobadoForm
+from .form import ContestadoForm, AprobadoForm, PreparadoForm
 
 
 class Inicio(TemplateView):
@@ -17,6 +16,11 @@ class ContestadoCreateView(CreateView):
     form_class = ContestadoForm
     template_name = 'sgl/contestado/crear_contestado.html'
     success_url = reverse_lazy('listar_contestado')
+
+    def form_valid(self, form):
+        if form.instance.aprobado:
+            form.instance.estado = 'APRO'
+        return super().form_valid(form)
 
 
 class ContestadoListView(View):
@@ -41,13 +45,14 @@ class ContestadoUpdateView(UpdateView):
     model = Licitacion
     template_name = 'sgl/contestado/contestado.html'
     form_class = ContestadoForm
+    context_object_name = 'contestados'
+    queryset = Licitacion.objects.filter(estado='CONT', activo=True)
     success_url = reverse_lazy('listar_contestado')
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['contestados'] = self.model.objects.filter(
-            estado='CONT', activo=True)
-        return context
+    def form_valid(self, form):
+        if form.instance.aprobado:
+            form.instance.estado = 'APRO'
+        return super().form_valid(form)
 
 
 class ContestadoDeleteView(DeleteView):
@@ -73,10 +78,46 @@ class AprobadoListView(ListView):
 
 class AprobadoUpdateView(UpdateView):
     model = Licitacion
-    template_name = 'sgl/aprobado/crear_aprobado.html'
+    template_name = 'sgl/aprobado/aprobado.html'
     form_class = AprobadoForm
-    context_object_name = 'aprobado_form'
+    context_object_name = 'aprobados'
     success_url = reverse_lazy('listar_aprobado')
+
+    def form_valid(self, form):
+        if form.instance.aprobado:
+            form.instance.estado = 'APRO'
+        else:
+            form.instance.estado = 'CONT'
+            form.instance.fecha_aprobado = None
+            form.instance.numero_orden_compra = None
+            form.instance.fecha_entrega_pactada = None
+
+        if form.instance.fecha_aprobado:
+            if form.instance.dias_demora == 'SINDI':
+                days_to_add = 0
+            elif form.instance.dias_demora == 'INMED':
+                days_to_add = 1
+            elif form.instance.dias_demora == '01-01':
+                days_to_add = 1
+            elif form.instance.dias_demora == '02-02':
+                days_to_add = 2
+            elif form.instance.dias_demora == '03-03':
+                days_to_add = 3
+            elif form.instance.dias_demora == '04-07':
+                days_to_add = 7
+            elif form.instance.dias_demora == '07-15':
+                days_to_add = 15
+            elif form.instance.dias_demora == '15-30':
+                days_to_add = 30
+            elif form.instance.dias_demora == '30-30':
+                days_to_add = 60
+
+            form.instance.fecha_entrega_pactada = form.instance.fecha_aprobado + \
+                timedelta(days=days_to_add)
+            form.instance.estado = 'PREP'
+            form.instance.fecha_preparacion = datetime.now()
+
+        return super().form_valid(form)
 
 
 class AprobadoDeleteView(DeleteView):
@@ -93,8 +134,34 @@ class AprobadoDeleteView(DeleteView):
             return redirect('listar_aprobado')
 
 
-class PreparacionView(TemplateView):
-    template_name = 'preparado/preparado.html'
+class PreparadoListView(ListView):
+    model = Licitacion
+    template_name = 'sgl/preparado/listar_preparado.html'
+    context_object_name = 'preparados'
+    queryset = Licitacion.objects.filter(estado='PREP', activo=True)
+
+
+class PreparadoUpdateView(UpdateView):
+    model = Licitacion
+    template_name = 'sgl/preparado/preparado.html'
+    form_class = PreparadoForm
+    context_object_name = 'preparados'
+    success_url = reverse_lazy('listar_preparado')
+
+    def form_valid(self, form):
+        if form.instance.preparado:
+            form.instance.estado = 'LIST'
+        else:
+            form.instance.estado = 'PREP'
+
+        return super().form_valid(form)
+
+
+class ListoEnviarListView(ListView):
+    model = Licitacion
+    template_name = 'sgl/listo_enviar/listar_listo_enviar.html'
+    context_object_name = 'listos'
+    queryset = Licitacion.objects.filter(estado='LIST', activo=True)
 
 
 class ListoEnviarView(TemplateView):
