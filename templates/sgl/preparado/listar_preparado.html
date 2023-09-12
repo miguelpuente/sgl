@@ -36,7 +36,7 @@
                                     <td>{{ preparado.numero_presupuesto }}</td>
                                     <td>
                                         <button onclick="abrir_modal_edicion('{% url 'actualizar_preparado' preparado.id %}')" class='btn btn-primary'>Editar</button>
-                                        <a href= {% url 'eliminar_contestado' preparado.id %} class='btn btn-danger'>Eliminar</a>
+                                        <a href= {% url 'eliminar_preparado' preparado.id %} class='btn btn-danger'>Eliminar</a>
                                     </td>
                                 </tr>
                         
@@ -46,7 +46,7 @@
             </div>
         </div>
     {% else %}
-        <h2>No hay contestados pendientes de aprobación</h2>
+        <h2>No hay preparados pendientes de enviar</h2>
     {% endif %}
 
     <div class='modal fade' id='creacion' role='dialog'>

@@ -3,7 +3,7 @@ from django.urls import reverse_lazy
 from datetime import datetime, timedelta
 from django.views.generic import View, TemplateView, ListView, UpdateView, CreateView, DeleteView
 from .models import Licitacion
-from .form import ContestadoForm, AprobadoForm, PreparadoForm
+from .form import ContestadoForm, AprobadoForm, PreparadoForm, ListoForm, EnviadoForm
 
 
 class Inicio(TemplateView):
@@ -64,9 +64,8 @@ class ContestadoDeleteView(DeleteView):
             object = Licitacion.objects.get(id=pk)
             object.activo = False
             object.save()
-            return redirect('listar_contestado')
-        else:
-            return redirect('listar_contestado')
+
+        return redirect('listar_contestado')
 
 
 class AprobadoListView(ListView):
@@ -129,9 +128,8 @@ class AprobadoDeleteView(DeleteView):
             object = Licitacion.objects.get(id=pk)
             object.activo = False
             object.save()
-            return redirect('listar_aprobado')
-        else:
-            return redirect('listar_aprobado')
+
+        return redirect('listar_aprobado')
 
 
 class PreparadoListView(ListView):
@@ -151,10 +149,24 @@ class PreparadoUpdateView(UpdateView):
     def form_valid(self, form):
         if form.instance.preparado:
             form.instance.estado = 'LIST'
+            form.instance.fecha_listo_enviar = datetime.now()
         else:
             form.instance.estado = 'PREP'
 
         return super().form_valid(form)
+    
+
+class PreparadoDeleteView(DeleteView):
+    model = Licitacion
+
+    def post(self, request, pk, *args, **kwargs):
+        object = Licitacion.objects.filter(id=pk)
+        if object:
+            object = Licitacion.objects.get(id=pk)
+            object.activo = False
+            object.save()
+
+        return redirect('listar_preparado')
 
 
 class ListoEnviarListView(ListView):
@@ -164,5 +176,46 @@ class ListoEnviarListView(ListView):
     queryset = Licitacion.objects.filter(estado='LIST', activo=True)
 
 
-class ListoEnviarView(TemplateView):
-    template_name = 'listo_enviar/listo_enviar.html'
+class ListoEnviarUpdateView(UpdateView):
+    model = Licitacion
+    template_name = 'sgl/listo_enviar/listo.html'
+    form_class = ListoForm
+    context_object_name = 'listos'
+    success_url = reverse_lazy('listar_listo_enviar')
+
+    def form_valid(self, form):
+        if form.instance.enviado:
+            form.instance.estado = 'ENVI'
+            form.instance.fecha_enviado = datetime.now()
+        else:
+            form.instance.estado = 'LIST'
+
+        return super().form_valid(form)
+
+
+class ListoEnviarDeleteView(DeleteView):
+    model = Licitacion
+
+    def post(self, request, pk, *args, **kwargs):
+        object = Licitacion.objects.filter(id=pk)
+        if object:
+            object = Licitacion.objects.get(id=pk)
+            object.activo = False
+            object.save()
+
+        return redirect('listar_listo_enviar')
+
+
+class EnviadoListView(ListView):
+    model = Licitacion
+    template_name = 'sgl/enviado/listar_enviado.html'
+    context_object_name = 'listos'
+    queryset = Licitacion.objects.filter(estado='ENVI', activo=True)
+
+
+class EnviadoUpdateView(UpdateView):
+    model = Licitacion
+    template_name = 'sgl/enviado/enviado.html'
+    form_class = EnviadoForm
+    context_object_name = 'enviados'
+    success_url = reverse_lazy('listar_enviado')

@@ -216,3 +216,69 @@ class PreparadoForm(forms.ModelForm):
                 }
             ),
         }
+
+
+class ListoForm(forms.ModelForm):
+    class Meta:
+        model = Licitacion
+        fields = ['enviado', 'comentarios_listo_enviar']
+        labels = {
+            'enviado': 'Enviado',
+            'comentarios_listo_enviar': 'Comentarios Listo para Enviar',
+        }
+        widgets = {
+            'enviado': forms.CheckboxInput(
+                attrs={
+                    'class': 'form-control',
+                }
+            ),
+            'comentarios_listo_enviar': forms.Textarea(
+                attrs={
+                    'class': 'form-control',
+                    'placeholder': 'Comentario',
+                    'id': 'comentario',
+                }
+            ),
+        }
+
+
+class EnviadoForm(forms.ModelForm):
+    class Meta:
+        model = Licitacion
+        fields = ['enviado', 'transporte',
+                  'factura', 'remito', 'comentarios_envio']
+        labels = {
+            'enviado': 'Enviado',
+            'factura': 'N° Factura',
+            'remito': 'Imagen del remito',
+            'comentarios_envio': 'Comentarios del envío',
+        }
+        widgets = {
+            'enviado': forms.CheckboxInput(
+                attrs={
+                    'class': 'form-control',
+                }
+            ),
+            'transporte': forms.Select(
+                attrs={
+                    'class': 'form-control',
+                    'id': 'transporte',
+                    'required': 'true',
+                }
+            ),
+            'factura': forms.TextInput(
+                attrs={
+                    'class': 'form-control',
+                    'placeholder': 'A-1234-12345678',
+                    'id': 'factura',
+                }
+            ),
+            'remito': forms.FileInput(),
+            'comentarios_envio': forms.Textarea(
+                attrs={
+                    'class': 'form-control',
+                    'placeholder': 'Comentario',
+                    'id': 'comentario',
+                }
+            ),
+        }

@@ -24,7 +24,18 @@ urlpatterns = [
          name='listar_preparado'),
     path('actualizar_preparado/<uuid:pk>/',
          login_required(views.PreparadoUpdateView.as_view()), name='actualizar_preparado'),
+     path('eliminar_preparado/<uuid:pk>/',
+         login_required(views.PreparadoDeleteView.as_view()), name='eliminar_preparado'),
 
     path('listar_listo_enviar/', login_required(views.ListoEnviarListView.as_view()),
          name='listar_listo_enviar'),
+     path('actualizar_listo_enviar/<uuid:pk>/',
+         login_required(views.ListoEnviarUpdateView.as_view()), name='actualizar_listo_enviar'),
+     path('eliminar_listo_enviar/<uuid:pk>/',
+         login_required(views.ListoEnviarDeleteView.as_view()), name='eliminar_listo_enviar'),
+
+     path('listar_enviado/', login_required(views.EnviadoListView.as_view()),
+         name='listar_enviado'),
+     path('actualizar_enviado/<uuid:pk>/',
+         login_required(views.EnviadoUpdateView.as_view()), name='actualizar_enviado'),
 ]

@@ -1,3 +1,5 @@
+*.docx
+
 # Django #
 *.log
 *.pot
