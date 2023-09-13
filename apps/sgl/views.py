@@ -154,7 +154,7 @@ class PreparadoUpdateView(UpdateView):
             form.instance.estado = 'PREP'
 
         return super().form_valid(form)
-    
+
 
 class PreparadoDeleteView(DeleteView):
     model = Licitacion
@@ -219,3 +219,13 @@ class EnviadoUpdateView(UpdateView):
     form_class = EnviadoForm
     context_object_name = 'enviados'
     success_url = reverse_lazy('listar_enviado')
+
+    def form_valid(self, form):
+        if not form.instance.enviado:
+            form.instance.fecha_enviado = None
+            form.instance.estado = 'LIST'
+            form.instance.transporte = None
+            form.instance.factura = None
+            form.instance.remito = None
+            form.instance.comentarios_envio = None
+        return super().form_valid(form)

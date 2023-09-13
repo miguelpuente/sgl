@@ -49,7 +49,7 @@ class ContestadoForm(forms.ModelForm):
             'aseguradora': forms.Select(
                 attrs={
                     'class': 'form-control',
-                    'id': 'fecha_contestado',
+                    'id': 'aseguradora',
                     'required': 'true'
                 }
             ),
