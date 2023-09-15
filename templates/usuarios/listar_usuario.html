@@ -1,5 +1,5 @@
 {% extends 'index.html' %}
-{% load staticfiles %}
+{% load static %}
 {% block titulo %}
 Biblioteca.dev | Listado de Usuarios
 {% endblock titulo %}
@@ -7,44 +7,49 @@ Biblioteca.dev | Listado de Usuarios
     <link rel="stylesheet" href="{% static 'css/lib/datatable/dataTables.bootstrap.min.css' %}">
 {% endblock extra_css %}
 {% block body %}
-<div class="card">
-    <div class="card-header">
-        <div class="row">
-            <div class="col-md-8">
-                <strong class="card-title">Listado de Usuarios</strong>
+    {% if object_list %}
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-8">
+                        <strong class="card-title">Listado de Usuarios</strong>
+                    </div>
+                </div>
+                
             </div>
-            <div class="col-md-4">
-                <button type="button" class="btn btn-primary" onclick="abrir_modal_creacion('{% url 'usuarios:registrar_usuario' %}');"> REGISTRAR USUARIO</button>
+            <div class="table-stats order-table ov-h">
+                <table id="tabla_usuarios" class="table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Username</th>
+                            <th>Nombres</th>
+                            <th>Apellidos</th>
+                            <th>Email</th>
+                            <th>Opciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for usuario in object_list %}
+                            <tr>
+                                <td>{{ usuario.id }}</td>
+                                <td>{{ usuario.username }}</td>
+                                <td>{{ usuario.nombres }}</td>
+                                <td>{{ usuario.apellidos }}</td>
+                                <td>{{ usuario.email }}</td>
+                                <td>
+                                    <a href='' class='btn btn-danger'>Editar</a>
+                                    <a href='' class='btn btn-primary'>Editar</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
-        
-    </div>
-    <div class="table-stats order-table ov-h">
-        <table id="tabla_usuarios" class="table">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Username</th>
-                    <th>Nombres</th>
-                    <th>Apellidos</th>
-                    <th>Email</th>
-                    <th>Opciones</th>
-                </tr>
-            </thead>
-            <tbody>               
-            </tbody>
-        </table>
-    </div>
-</div>
-<div class="modal fade" id="creacion" role="dialog">
-
-</div>
-<div class="modal fade" id="edicion" role="dialog">
-
-</div>
-<div class="modal fade" id="eliminacion" role="dialog">
-
-</div>
+    {% else %}
+        <h1>No existen usuarios registrados</h1>
+    {% endif %}
 {% endblock body %}
 {% block extrajs %}
     <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>

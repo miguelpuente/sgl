@@ -23,7 +23,6 @@
                             <th>Monto</th>
                             <th>Provincia</th>
                             <th>Localidad</th>
-                            <th>Usuario</th>
                             <th>Opciones</th>
                         </tr>
                     </thead>
@@ -37,7 +36,6 @@
                                     <td>{{ aprobado.monto }}</td>
                                     <td>{{ aprobado.provincia }}</td>
                                     <td>{{ aprobado.localidad }}</td>
-                                    <td>{{ aprobado.usuario }}</td>
                                     <td>
                                         <button onclick = "abrir_modal_edicion('{% url 'actualizar_aprobado' aprobado.id %}')" class='btn btn-primary'>Editar</button>
                                         <a href= {% url 'eliminar_aprobado' aprobado.id %} class='btn btn-danger'>Eliminar</a>

@@ -24,7 +24,6 @@
                             <th>Provincia</th>
                             <th>Localidad</th>
                             <th>Remito</th>
-                            <th>Usuario</th>
                             <th>Opciones</th>
                         </tr>
                     </thead>
@@ -39,11 +38,10 @@
                                     <td>{{ listo.provincia }}</td>
                                     <td>{{ listo.localidad }}</td>
                                     {% if listo.remito %}
-                                        <td><a download="{{ listo.numero_siniestro }}" href={{ listo.remito.url }}> <img src="{{ listo.remito.url }}" style="width:50px;height:50px"/></a></td>
+                                        <td><a download={{ listo.numero_siniestro }} href={{ listo.remito.url }}> <img src="{{ listo.remito.url }}" style="width:50px;height:50px"/></a></td>
                                     {% else %}
                                         <td><img src="{% static 'images/remito/no_imagen.jpg' %}" style="width:50px;height:50px"/></td>
                                     {% endif %}
-                                    <td>{{ listo.usuario }}</td>
                                     <td>
                                         <button onclick = "abrir_modal_edicion('{% url 'actualizar_enviado' listo.id %}')" class='btn btn-primary'>Editar</button>
                                     </td>

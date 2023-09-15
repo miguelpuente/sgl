@@ -23,7 +23,6 @@
                             <th>Monto</th>
                             <th>Provincia</th>
                             <th>Localidad</th>
-                            <th>Usuario</th>
                             <th>Opciones</th>
                         </tr>
                     </thead>
@@ -37,7 +36,6 @@
                                     <td>{{ listo.monto }}</td>
                                     <td>{{ listo.provincia }}</td>
                                     <td>{{ listo.localidad }}</td>
-                                    <td>{{ listo.usuario }}</td>
                                     <td>
                                         <button onclick = "abrir_modal_edicion('{% url 'actualizar_listo_enviar' listo.id %}')" class='btn btn-primary'>Editar</button>
                                         <a href= {% url 'eliminar_listo_enviar' listo.id %} class='btn btn-danger'>Eliminar</a>
