@@ -1,0 +1,109 @@
+{% load humanize %}
+<section class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body">
+        
+            <div class="page-header flex-wrap">
+                <h3 class="mb-0"> Contestados <span class="pl-0 h6 pl-sm-2 text-muted d-inline-block">Esperando aprobación</span></h3>
+                <div class="d-flex">
+                    <button type="button" class="btn btn-sm ml-3 btn-outline-success"> Nuevo </button>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Vehículo</th>
+                            <th>Dominio</th>
+                            <th>Presupuesto</th>
+                            <th>Seguro</th>
+                            <th>Siniestro</th>
+                            <th>Monto</th>
+                            <th>Localidad</th>
+                            <th>Usuario</th>
+                            <th>Sucursal</th>
+                            <th>Ver</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for licitacion in licitaciones %}
+                
+                            <tr>
+                                
+                                <td>
+                                    {% if licitacion.fecha_contestado %}
+                                        {{ licitacion.fecha_contestado|date:'d/m/y' }}
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    {% if licitacion.vehiculo %}
+                                        {{ licitacion.get_vehiculo_display|upper }}
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    {% if licitacion.dominio %}
+                                        {{ licitacion.dominio|upper }}
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    {% if licitacion.numero_presupuesto %}
+                                        {{ licitacion.numero_presupuesto }}
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    {% if licitacion.aseguradora %}
+                                        {{ licitacion.aseguradora }}
+                                    {% endif %}
+                                </td>
+                                
+                                <td>
+                                    {% if licitacion.numero_siniestro %}
+                                        {{ licitacion.numero_siniestro }}
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    {% if licitacion.monto %}
+                                        $ {{ licitacion.monto|floatformat:2|intcomma }}
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    {% if licitacion.localidad %}
+                                        {{ licitacion.localidad }}
+                                    {% endif %}
+                                </td>
+
+                                <td class="py-1">
+                                    {% if user.perfil.imagen and user.perfil.imagen.url %}
+                                        <img src={{ user.perfil.imagen.url }} alt="image" />
+                                        {{ user }}
+                                    {% else %}
+                                        {{ user }}
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    {% if user.perfil.sucursal %}
+                                        {{ user.perfil.get_sucursal_display|upper }}
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    <a href={% url 'seguros:detalle_contestado' licitacion.id %} class="btn btn-sm btn-outline-success"> Ver </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>

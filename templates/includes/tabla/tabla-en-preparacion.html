@@ -1,0 +1,88 @@
+{% load humanize %}
+<section class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body">
+        
+        <div class="page-header flex-wrap">
+              <h3 class="mb-0"> En Preparación <span class="pl-0 h6 pl-sm-2 text-muted d-inline-block"></span></h3>
+            </div>
+
+        <div class="table-responsive">
+            <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Siniestro</th>
+                    <th>Art.</th>
+                    <th>Art. Listos</th>
+                    <th>Seguro</th>
+                    <th>Días Disponibles</th>
+                    <th>Monto</th>
+                    <th>Localidad</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for licitacion in licitaciones %}
+                    <tr>
+                        <td>
+                            {% if licitacion.fecha_aprobado %}
+                                {{ licitacion.fecha_aprobado|date:'d/m/y' }}
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if licitacion.vehiculo %}
+                                {{ licitacion.get_vehiculo_display|upper }}
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if licitacion.dominio %}
+                                {{ licitacion.dominio|upper }}
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if licitacion.numero_presupuesto %}
+                                {{ licitacion.numero_presupuesto }}
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if licitacion.cantidad_articulos %}
+                                {{ licitacion.cantidad_articulos }}
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if licitacion.aseguradora %}
+                                {{ licitacion.aseguradora }}
+                            {% endif %}
+                        </td>
+                        
+                        <td>
+                            {% if licitacion.numero_siniestro %}
+                                {{ licitacion.numero_siniestro }}
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if licitacion.monto %}
+                                $ {{ licitacion.monto|floatformat:2|intcomma }}
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if licitacion.localidad %}
+                                {{ licitacion.localidad }} - {{ licitacion.localidad.provincia }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+
+            </tbody>
+            </table>
+        </div>
+        </div>
+    </div>
+</section>

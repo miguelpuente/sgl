@@ -1,0 +1,107 @@
+{% extends "includes/componentes/listado.html" %}
+
+{% load static %}
+{% load humanize %}
+
+{% block columnas %}
+    <tr>
+        <th>Fecha</th>
+        <th>Vehículo</th>
+        <th>Dominio</th>
+        <th>Presupuesto</th>
+        <th>Seguro</th>
+        <th>Siniestro</th>
+        <th>Monto</th>
+        <th>Localidad</th>
+        <th>Usuario</th>
+        <th>Sucursal</th>
+        <th>Acciones</th>
+    </tr>
+{% endblock columnas %}
+
+{% block filas %}
+    {% for licitacion in licitaciones %}
+    <tr>                        
+            <td>
+                {% if licitacion.creado %}
+                    {{ licitacion.creado|date:'d/m/Y' }}
+                {% endif %}
+            </td>
+
+            <td>
+                {% if licitacion.vehiculo %}
+                    {{ licitacion.vehiculo|upper }}
+                {% endif %}
+            </td>
+
+            <td>
+                {% if licitacion.dominio %}
+                    {{ licitacion.dominio|upper }}
+                {% endif %}
+            </td>
+
+            <td>
+                {% if licitacion.numero_presupuesto %}
+                    {{ licitacion.numero_presupuesto }}
+                {% endif %}
+            </td>
+
+            <td>
+                {% if licitacion.aseguradora %}
+                    {{ licitacion.aseguradora }}
+                {% endif %}
+            </td>
+            
+            <td>
+                {% if licitacion.numero_siniestro %}
+                    {{ licitacion.numero_siniestro }}
+                {% endif %}
+            </td>
+
+            <td>
+                {% if licitacion.monto %}
+                    $ {{ licitacion.monto|floatformat:2|intcomma }}
+                {% endif %}
+            </td>
+
+            <td>
+                {% if licitacion.localidad %}
+                    {{ licitacion.localidad }}
+                {% endif %}
+            </td>
+
+            <td class="py-1">
+                {% if user.perfil.imagen and user.perfil.imagen.url %}
+                    <img src={{ user.perfil.imagen.url }} alt="image" />
+                    {{ user }}
+                {% else %}
+                    {{ user }}
+                {% endif %}
+            </td>
+
+            <td>
+                {% if licitacion.sucursal %}
+                    {{ licitacion.sucursal }}
+                {% endif %}
+            </td>
+
+        <td class="project-actions text-right">
+            <a class="btn btn-primary btn-sm" href="#">
+                <i class="fas fa-folder">
+                </i>
+                Ver
+            </a>
+            <a class="btn btn-warning btn-sm" href={% url "seguros:editar_licitacion" licitacion.id %}>
+                <i class="fas fa-pencil-alt">
+                </i>
+                Editar
+            </a>
+            <a class="btn btn-danger btn-sm" href={% url "seguros:eliminar_licitacion" licitacion.id %}>
+                <i class="fas fa-trash">
+                </i>
+                Borrar
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+{% endblock filas %}

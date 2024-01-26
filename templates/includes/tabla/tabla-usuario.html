@@ -1,0 +1,76 @@
+{% load humanize %}
+<section class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body">
+        
+            <div class="page-header flex-wrap">
+                <h3 class="mb-0"> Usuarios <span class="pl-0 h6 pl-sm-2 text-muted d-inline-block"></span></h3>
+                <div class="d-flex">
+                    <a href={% url 'auth:registro' %} class="btn btn-sm ml-3 btn-outline-success"> Nuevo </a>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>username</th>
+                            <th>Último Login</th>
+                            <th>Email</th>
+                            <th>Sucursal</th>
+                            <th>Grupo</th>
+                            <th>Modificado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for usuario in usuarios %}
+                            <tr>
+                                <td>
+                                    {% if usuario.user.username %}
+                                        {{ usuario.user.username }}
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    {% if usuario.user.last_login %}
+                                        {{ usuario.user.last_login|date:'d/m/y h:s' }}
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    {% if usuario.user.email %}
+                                        {{ usuario.user.email }}
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    {% if usuario.sucursal %}
+                                        {{ usuario.get_sucursal_display }}
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    {% if usuario.user.groups %}
+                                        {{ usuario.user.groups.first.name }}
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    {% if usuario.modificado %}
+                                        {{ usuario.modificado|date:'d/m/y h:s' }}
+                                    {% endif %}
+                                </td>
+                                
+                                <td>
+                                    <a href={% url 'auth:detalle' usuario.id %} class="btn btn-sm btn-outline-success"> Ver </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
