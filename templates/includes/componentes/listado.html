@@ -34,15 +34,13 @@
           <h3 class="card-title">{{ card_title }}</h3>
 
           <div class="card-tools">
-            <a class="btn btn-success btn-sm" href={% url "seguros:listar_licitaciones" %}>
-              <i class="fas fa-plus">
-              </i>
+            <a class="btn btn-success btn-sm" href={{ list_url }}>
+              <i class="fas fa-sync-alt"></i>
               Actualizar
             </a>  
             <a class="btn btn-info btn-sm" href={% url "seguros:crear_licitacion" %}>
-                  <i class="fas fa-plus">
-                  </i>
-                  Nuevo
+                  <i class="fas fa-plus"></i>
+                  Nueva Licitación
               </a>
             </div>
         </div>

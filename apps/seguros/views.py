@@ -1,5 +1,6 @@
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
+from datetime import timedelta
 from django.db.models import Q
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, JsonResponse
 from django.http.response import HttpResponse as HttpResponse
@@ -7,8 +8,8 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, CreateView, DetailView, ListView, UpdateView, DeleteView
 from .models import Licitacion, Aprobada, Preparada, ListaEnviar, Enviada, Perito
-from .forms import LicitacioForm
 from apps.direccion.models import DatoEntrega, Provincia, Localidad
+from .forms import LicitacioForm, AprobadaForm
 
 class Inicio(TemplateView):
     template_name = 'pages/home.html'
@@ -62,8 +63,12 @@ class LicitacionCreateView(CreateView):
             if action == 'agregar':
                 form = self.get_form()
                 if form.is_valid():
-                    form.instance.datos_entrega = DatoEntrega.objects.create(localidad=form.cleaned_data['localidad'])
+                    if form.is_valid():
+                        form.instance.datos_entrega = DatoEntrega.objects.create(localidad=form.cleaned_data['localidad'])
                     data = form.save()
+                else:
+                    for i in form:
+                        print(f'{i.errors} - {i.value()}')
             else:
                 data['error'] = 'NO ha ingresado una acción válida'
         except Exception as e:
@@ -99,7 +104,8 @@ class LicitacionUpdateView(UpdateView):
                     localidad = DatoEntrega.objects.get(id = form.instance.datos_entrega_id)
                     localidad.localidad = form.cleaned_data['localidad']
                     localidad.save()
-                    Aprobada.objects.create(licitacion=form.instance).save()
+                    if not Aprobada.objects.filter(licitacion=form.instance) and form.instance.terminado == True:
+                        Aprobada.objects.create(licitacion=form.instance).save()
                     data = form.save()
             else:
                 data['error'] = 'NO ha ingresado una acción válida'
@@ -155,7 +161,42 @@ class AprobadasListView(ListView):
         context["list_url"] = reverse_lazy('seguros:listar_aprobadas')
         return context
 
-    
+
+class AprobadaUpdateView(UpdateView):
+    model = Aprobada
+    form_class = AprobadaForm
+    template_name = 'pages/aprobadas/editar_aprobada.html'
+    success_url = reverse_lazy('seguros:listar_aprobadas')
+
+    def dispatch(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        return super().dispatch(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        data = {}
+        try:
+            accion = request.POST['accion']
+            if accion == 'editar':
+                form = self.get_form()
+                if form.is_valid():
+                    if not Preparada.objects.filter(aprobada=form.instance) and form.instance.terminado == True:
+                        Preparada.objects.create(aprobada=form.instance).save()
+                    data = form.save()
+            else:
+                data['error'] = 'NO ha ingresado una acción válida'
+        except Exception as e:
+            data['error'] = str(e)
+        return JsonResponse(data)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["header_page"] = "Aprobadas"
+        context["card_title"] = f"Editar Siniestro - { self.get_object().licitacion.numero_siniestro}"
+        context["accion"] = "editar"
+        context["list_url"] = reverse_lazy('seguros:listar_aprobadas')
+        return context
+
+
 # class BuscarListView(ListView):
 #     template_name = 'operaciones.html'
 #     model = Licitacion

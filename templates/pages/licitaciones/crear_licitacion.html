@@ -32,7 +32,7 @@
             </div>
             <!-- /.card-header -->
             <!-- form start -->
-            <form method="POST">
+            <form method="POST" id="form">
               {% csrf_token %}
 
               {% if accion == 'agregar' %}
@@ -287,6 +287,85 @@
 
         });
       });
+
+      document.querySelector('[name="numero_presupuesto"]').addEventListener('change', function(event) {
+        let numeroPresupuestoInput = event.target;
+        let valor = numeroPresupuestoInput.value;
+
+        if (!/^\d+$/.test(valor) || valor.length > 20) {
+            alerta_error('Número de Presupuesto debe ser un número positivo de no más de 20 dígitos');
+            numeroPresupuestoInput.value = '';
+            numeroPresupuestoInput.focus();
+        }
+      });
+
+      document.querySelector('[name="monto"]').addEventListener('change', function(event) {
+        let montoInput = event.target;
+        let valor = montoInput.value;
+
+        // Expresión regular para validar el formato de monto con hasta 10 dígitos en la parte entera y 2 en la parte decimal
+        let regex = /^\d{1,10}(\.\d{1,2})?$/;
+
+        if (!regex.test(valor) || parseFloat(valor) <= 0) {
+            alerta_error('Monto debe ser un número positivo con hasta 10 dígitos en la parte entera y 2 en la parte decimal');
+            montoInput.value = '';
+            montoInput.focus();
+        }
+      });
+
+      document.querySelector('[name="cantidad_articulos"]').addEventListener('change', function(event) {
+        let CantidadArticulosInput = event.target;
+        let valor = CantidadArticulosInput.value;
+
+        if (!/^\d+$/.test(valor) || valor.length > 4) {
+            alerta_error('Cantidad Artículos debe ser un número positivo de no más de 4 dígitos');
+            CantidadArticulosInput.value = '';
+            CantidadArticulosInput.focus();
+        }
+      });
+
+      document.querySelector('[name="costo_transporte"]').addEventListener('change', function(event) {
+        let CostoTransporteInput = event.target;
+        let valor = CostoTransporteInput.value;
+
+        // Expresión regular para validar el formato de monto con hasta 10 dígitos en la parte entera y 2 en la parte decimal
+        let regex = /^\d{1,10}(\.\d{1,2})?$/;
+
+        if (!regex.test(valor) || parseFloat(valor) <= 0) {
+            alerta_error('Costo Transporte debe ser un número positivo con hasta 10 dígitos en la parte entera y 2 en la parte decimal');
+            CostoTransporteInput.value = '';
+            CostoTransporteInput.focus();
+        }
+      });
+
+      document.querySelector('[name="numero_siniestro"]').addEventListener('change', function(event) {
+        let numeroSiniestroInput = event.target;
+        let valor = numeroSiniestroInput.value;
+
+        if (!/^\d+$/.test(valor) || valor.length > 20) {
+            alerta_error('Número de Siniestro debe ser un número positivo de no más de 20 dígitos');
+            numeroSiniestroInput.value = '';
+            numeroSiniestroInput.focus();
+        }
+      });
+
+      document.querySelector('[name="dominio"]').addEventListener('change', function(event) {
+        let dominioInput = event.target;
+        let valor = dominioInput.value;
+
+        // Expresión regular para validar el formato del dominio
+        let regex = /^(?:[a-zA-Z]{3}\d{3}|[a-zA-Z]{2}\d{3}[a-zA-Z]{2})$/;
+
+        if (!regex.test(valor)) {
+            alerta_error('Formato de dominio inválido. Debe tener la forma "abc123" o "ab123cd".');
+            dominioInput.value = '';
+            dominioInput.focus();
+        } else {
+          // Convertir letras a mayúsculas
+          dominioInput.value = valor.toUpperCase();
+        }
+      });
+
     });
   </script>
 {% endblock script %}

@@ -4,7 +4,6 @@
 
 {% block columnas %}
     <tr>
-        <th>Fecha</th>
         <th>Vehículo</th>
         <th>Dominio</th>
         <th>Presupuesto</th>
@@ -12,20 +11,15 @@
         <th>Siniestro</th>
         <th>Monto</th>
         <th>Localidad</th>
-        <th>Transporte</th>
-        <th>Días Disponible</th>
+        <th>Usuario</th>
+        <th>Sucursal</th>
         <th>Acciones</th>
     </tr>
 {% endblock columnas %}
 
 {% block filas %}
     {% for aprobada in aprobadas %}
-    <tr>                        
-            <td>
-                {% if aprobada.creado %}
-                    {{ aprobada.creado|date:'d/m/Y' }}
-                {% endif %}
-            </td>
+    <tr>
 
             <td>
                 {% if aprobada.licitacion.vehiculo %}
@@ -65,22 +59,18 @@
 
             <td>
                 {% if aprobada.licitacion.datos_entrega.localidad %}
-                    {{ aprobada.licitacion.datos_entrega.localidad }}
-                {% endif %}
-            </td>
-
-            <td class="py-1">
-                {% if user.perfil.imagen and user.perfil.imagen.url %}
-                    <img src={{ user.perfil.imagen.url }} alt="image" />
-                    {{ user }}
-                {% else %}
-                    {{ user }}
+                    {{ aprobada.licitacion.datos_entrega.localidad }} - 
+                    {{ aprobada.licitacion.datos_entrega.localidad.provincia }}
                 {% endif %}
             </td>
 
             <td>
-                {% if licitacion.sucursal %}
-                    {{ licitacion.sucursal }}
+                {{ user }}
+            </td>
+
+            <td>
+                {% if aprobada.licitacion.sucursal %}
+                    {{ aprobada.licitacion.sucursal }}
                 {% endif %}
             </td>
 
@@ -90,7 +80,7 @@
                 </i>
                 Ver
             </a>
-            <a class="btn btn-warning btn-sm" href="#">
+            <a class="btn btn-warning btn-sm" href={% url "seguros:editar_aprobada" aprobada.id %}>
                 <i class="fas fa-pencil-alt">
                 </i>
                 Editar

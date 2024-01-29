@@ -21,7 +21,7 @@
 
 {% block filas %}
     {% for licitacion in licitaciones %}
-    <tr>                        
+    <tr>
             <td>
                 {% if licitacion.creado %}
                     {{ licitacion.creado|date:'d/m/Y' }}
@@ -65,18 +65,13 @@
             </td>
 
             <td>
-                {% if licitacion.localidad %}
-                    {{ licitacion.localidad }}
+                {% if licitacion.datos_entrega.localidad %}
+                    {{ licitacion.datos_entrega.localidad }}
                 {% endif %}
             </td>
 
-            <td class="py-1">
-                {% if user.perfil.imagen and user.perfil.imagen.url %}
-                    <img src={{ user.perfil.imagen.url }} alt="image" />
-                    {{ user }}
-                {% else %}
-                    {{ user }}
-                {% endif %}
+            <td>
+                {{ user }}
             </td>
 
             <td>

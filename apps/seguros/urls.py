@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.urls import path
-from .views import Inicio, LicitacionesListView, AprobadasListView, LicitacionCreateView, LicitacionUpdateView, LicitacionDeleteView, ObtenerPeritosView
+from .views import Inicio, LicitacionesListView, AprobadasListView, AprobadaUpdateView, LicitacionCreateView, LicitacionUpdateView, LicitacionDeleteView, ObtenerPeritosView
 
 app_name = 'apps.seguros'
 
@@ -40,6 +40,12 @@ urlpatterns = [
         route='aprobadas/',
         view=login_required(AprobadasListView.as_view()),
         name='listar_aprobadas'
+    ),
+
+    path(
+        route='editar_aprobada/<uuid:pk>',
+        view=login_required(AprobadaUpdateView.as_view()),
+        name='editar_aprobada'
     ),
 
     # path(
