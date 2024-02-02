@@ -92,7 +92,7 @@ class Demora(models.Model):
     class Meta:
         verbose_name = 'Demora'
         verbose_name_plural = 'Demoras'
-        ordering = ['nombre']
+        ordering = ['dia']
 
     def __str__(self):
         return self.nombre.strip()
@@ -102,7 +102,6 @@ class Licitacion(models.Model):
     numero_siniestro = models.DecimalField(
         max_digits=20,
         decimal_places=0,
-        unique=True,
         validators=[MinValueValidator(0)],
     )
     user = models.ForeignKey(User, on_delete=models.PROTECT)
@@ -121,7 +120,6 @@ class Licitacion(models.Model):
     cantidad_articulos = models.DecimalField(
         max_digits=4,
         decimal_places=0,
-        unique=True,
         validators=[MinValueValidator(0)],
     )
     monto = models.DecimalField(
@@ -193,7 +191,9 @@ class Preparada(models.Model):
         validators=[MinValueValidator(0)],
         null=True,
         blank=True,
+        default=0,
     )
+    comentario = models.CharField(max_length= 300, null=True, blank=True)
     terminado = models.BooleanField(default=False)
     activo = models.BooleanField(default=True)
     actualizado = models.DateTimeField(auto_now=True)

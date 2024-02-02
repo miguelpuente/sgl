@@ -1,0 +1,85 @@
+{% extends "includes/componentes/listado.html" %}
+
+{% load humanize %}
+
+{% block columnas %}
+    <tr>
+        <th>Fecha Aprobada</th>
+        <th>Siniestro</th>
+        <th>Monto</th>
+        <th>Localidad</th>
+        <th>Seguro</th>
+        <th>Art.</th>
+        <th>Art. Listos</th>
+        <th>Días Disponibles</th>
+
+        <th>Acciones</th>
+    </tr>
+{% endblock columnas %}
+
+{% block filas %}
+    {% for preparada in preparadas %}
+    <tr>
+
+        <td>
+            {% if preparada.aprobada.fecha_aprobado %}
+                {{ preparada.aprobada.fecha_aprobado|date:'d/m/Y' }}
+            {% endif %}
+        </td>
+
+        <td>
+            {% if preparada.aprobada.licitacion.numero_siniestro %}
+                {{ preparada.aprobada.licitacion.numero_siniestro }}
+            {% endif %}
+        </td>
+
+        <td>
+            {% if preparada.aprobada.licitacion.monto %}
+                {{ preparada.aprobada.licitacion.monto }}
+            {% endif %}
+        </td>
+
+        <td>
+            {% if preparada.aprobada.licitacion.datos_entrega.localidad %}
+                {{ preparada.aprobada.licitacion.datos_entrega.localidad }} - 
+                {{ preparada.aprobada.licitacion.datos_entrega.localidad.provincia }}
+            {% endif %}
+        </td>
+
+        <td>
+            {% if preparada.aprobada.licitacion.aseguradora %}
+                {{ preparada.aprobada.licitacion.aseguradora }}
+            {% endif %}
+        </td>
+
+        <td>
+            {% if preparada.aprobada.licitacion.cantidad_articulos %}
+                {{ preparada.aprobada.licitacion.cantidad_articulos }}
+            {% endif %}
+        </td>
+
+        <td>
+            {% if preparada.cantidad_articulos_listos %}
+                {{ preparada.cantidad_articulos_listos }}
+            {% endif %}
+        </td>
+
+        <td>
+            {{ preparada.dias_restantes|default:"No disponible" }}
+        </td>
+
+        <td class="project-actions text-right">
+            <a class="btn btn-primary btn-sm" href={% url "seguros:detalle_preparada" preparada.id %}>
+                <i class="fas fa-folder">
+                </i>
+                Ver
+            </a>
+            <a class="btn btn-warning btn-sm" href={% url "seguros:editar_preparada" preparada.id %}>
+                <i class="fas fa-pencil-alt">
+                </i>
+                Editar
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+{% endblock filas %}

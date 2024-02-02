@@ -1,6 +1,9 @@
+from django import forms
 from django.utils.decorators import method_decorator
+from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from datetime import timedelta
+from django.utils import timezone
 from django.db.models import Q
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, JsonResponse
 from django.http.response import HttpResponse as HttpResponse
@@ -9,7 +12,7 @@ from django.urls import reverse_lazy
 from django.views.generic import TemplateView, CreateView, DetailView, ListView, UpdateView, DeleteView
 from .models import Licitacion, Aprobada, Preparada, ListaEnviar, Enviada, Perito
 from apps.direccion.models import DatoEntrega, Provincia, Localidad
-from .forms import LicitacioForm, AprobadaForm
+from .forms import LicitacioForm, AprobadaForm, PreparadaForm
 
 class Inicio(TemplateView):
     template_name = 'pages/home.html'
@@ -63,12 +66,18 @@ class LicitacionCreateView(CreateView):
             if action == 'agregar':
                 form = self.get_form()
                 if form.is_valid():
-                    if form.is_valid():
-                        form.instance.datos_entrega = DatoEntrega.objects.create(localidad=form.cleaned_data['localidad'])
+                    # Crea el objeto DatoEntrega
+                    nuevo_dato_entrega = DatoEntrega.objects.create(localidad=form.cleaned_data['localidad'])
+                    # Guarda el objeto DatoEntrega
+                    nuevo_dato_entrega.save()
+                    # Asigna el objeto DatoEntrega al campo datos_entrega
+                    form.instance.datos_entrega = nuevo_dato_entrega
+
                     data = form.save()
                 else:
-                    for i in form:
-                        print(f'{i.errors} - {i.value()}')
+                    # En el caso de errores, incluir detalles en el diccionario 'data'
+                    data['error'] = 'NO se guardó la licitación'
+                    data['form_errors'] = form.errors
             else:
                 data['error'] = 'NO ha ingresado una acción válida'
         except Exception as e:
@@ -82,6 +91,20 @@ class LicitacionCreateView(CreateView):
         context["accion"] = "agregar"
         context["list_url"] = reverse_lazy('seguros:listar_licitaciones')
         return context
+
+
+class LicitacionDetailView(DetailView):
+    model = Licitacion
+    template_name = 'pages/licitaciones/detalle_licitacion.html'
+    context_object_name = 'licitacion'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["header_page"] = "Detalle Licitación"
+        context["card_title"] = f"Detalle Licitación - Siniestro N°: {self.object.numero_siniestro}"
+        context["list_url"] = reverse_lazy('seguros:listar_licitaciones')
+        return context
+
 
 
 class LicitacionUpdateView(UpdateView):
@@ -104,9 +127,15 @@ class LicitacionUpdateView(UpdateView):
                     localidad = DatoEntrega.objects.get(id = form.instance.datos_entrega_id)
                     localidad.localidad = form.cleaned_data['localidad']
                     localidad.save()
+
                     if not Aprobada.objects.filter(licitacion=form.instance) and form.instance.terminado == True:
                         Aprobada.objects.create(licitacion=form.instance).save()
+                        
                     data = form.save()
+                else:
+                    # En el caso de errores, incluir detalles en el diccionario 'data'
+                    data['error'] = 'NO se guardó la licitación'
+                    data['form_errors'] = form.errors
             else:
                 data['error'] = 'NO ha ingresado una acción válida'
         except Exception as e:
@@ -162,6 +191,19 @@ class AprobadasListView(ListView):
         return context
 
 
+class AprobadaDetailView(DetailView):
+    model = Aprobada
+    template_name = 'pages/aprobadas/detalle_aprobada.html'
+    context_object_name = 'aprobada'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["header_page"] = "Detalle Aprobada"
+        context["card_title"] = f"Detalle Licitación Aprobada - Siniestro N°: {self.object.licitacion.numero_siniestro}"
+        context["list_url"] = reverse_lazy('seguros:listar_aprobadas')
+        return context
+
+
 class AprobadaUpdateView(UpdateView):
     model = Aprobada
     form_class = AprobadaForm
@@ -182,6 +224,10 @@ class AprobadaUpdateView(UpdateView):
                     if not Preparada.objects.filter(aprobada=form.instance) and form.instance.terminado == True:
                         Preparada.objects.create(aprobada=form.instance).save()
                     data = form.save()
+                else:
+                    # En el caso de errores, incluir detalles en el diccionario 'data'
+                    data['error'] = 'NO se guardó la licitación'
+                    data['form_errors'] = form.errors
             else:
                 data['error'] = 'NO ha ingresado una acción válida'
         except Exception as e:
@@ -195,6 +241,156 @@ class AprobadaUpdateView(UpdateView):
         context["accion"] = "editar"
         context["list_url"] = reverse_lazy('seguros:listar_aprobadas')
         return context
+
+
+class PreparadasListView(ListView):
+    model = Preparada
+    queryset = Preparada.objects.filter(activo=True, terminado=False, aprobada__terminado=True, aprobada__activo=True)
+    context_object_name = 'preparadas'
+    template_name = 'pages/preparadas/listar_preparadas.html'
+    ordering = ('-creado',)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["header_page"] = "En Preparación"
+        context["card_title"] = "Licitaciones en preparación"
+        context["list_url"] = reverse_lazy('seguros:listar_preparadas')
+
+        for preparada in context['preparadas']:
+            # Suma 5 días a la fecha_aprobado
+            entrega = preparada.aprobada.licitacion.demora.dia
+            preparada.nueva_fecha = preparada.aprobada.fecha_aprobado + timedelta(days=entrega)
+
+            # Convierte la fecha actual a datetime
+            fecha_actual = timezone.now().date()
+
+            # Calcula la diferencia de días
+            preparada.dias_restantes = (preparada.nueva_fecha - fecha_actual).days
+        return context
+
+
+class PreparadaDetailView(DetailView):
+    model = Preparada
+    template_name = 'pages/preparadas/detalle_preparada.html'
+    context_object_name = 'preparada'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["header_page"] = "Detalle En preparación"
+        context["card_title"] = f"Detalle Preparación - Siniestro N°: {self.object.aprobada.licitacion.numero_siniestro}"
+        context["list_url"] = reverse_lazy('seguros:listar_aprobadas')
+        return context
+
+
+class PreparadaUpdateView(UpdateView):
+    model = Preparada
+    form_class = PreparadaForm
+    template_name = 'pages/preparadas/editar_preparada.html'
+    success_url = reverse_lazy('seguros:listar_preparadas')
+
+    def dispatch(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        return super().dispatch(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        data = {}
+        try:
+            accion = request.POST['accion']
+            if accion == 'editar':
+                form = self.get_form()
+                if form.is_valid():
+                    if not ListaEnviar.objects.filter(preparada=form.instance) and form.instance.terminado == True:
+                        ListaEnviar.objects.create(preparada=form.instance).save()
+                    data = form.save()
+                else:
+                    # En el caso de errores, incluir detalles en el diccionario 'data'
+                    data['error'] = 'NO se guardó la licitación'
+                    data['form_errors'] = form.errors
+            else:
+                data['error'] = 'NO ha ingresado una acción válida'
+        except forms.ValidationError as e:
+            data['error'] = str(e)
+        except Exception as e:
+            data['error'] = str(e)
+        return JsonResponse(data)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["header_page"] = "En Preparación"
+        context["card_title"] = f"Editar Siniestro - { self.get_object().aprobada.licitacion.numero_siniestro}"
+        context["accion"] = "editar"
+        context["list_url"] = reverse_lazy('seguros:listar_preparadas')
+        context["articulos"] = self.get_object().aprobada.licitacion.cantidad_articulos
+        return context
+
+
+class ListasEnviarListView(ListView):
+    model = ListaEnviar
+    queryset = ListaEnviar.objects.filter(activo=True, terminado=False, preparada__terminado=True, preparada__activo=True)
+    context_object_name = 'listasenviar'
+    template_name = 'pages/listasenviar/listar_listasenviar.html'
+    ordering = ('-creado',)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["header_page"] = "Listas Enviar"
+        context["card_title"] = "Licitaciones listas para enviar"
+        context["list_url"] = reverse_lazy('seguros:listar_listasenviar')
+        
+        for lista in context['listasenviar']:
+            # Suma 5 días a la fecha_aprobado
+            entrega = lista.preparada.aprobada.licitacion.demora.dia
+            lista.nueva_fecha = lista.preparada.aprobada.fecha_aprobado + timedelta(days=entrega)
+
+            # Convierte la fecha actual a datetime
+            fecha_actual = timezone.now().date()
+
+            # Calcula la diferencia de días
+            lista.dias_restantes = (lista.nueva_fecha - fecha_actual).days
+        return context
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class ListasEnviarView(View):
+
+    def post(self, request, lista_id):
+        try:
+            lista = ListaEnviar.objects.get(id=lista_id)
+            lista.terminado = True
+            lista.save()
+            Enviada.objects.create(listaenviar=lista).save()
+            return JsonResponse({'success': True})
+        except ListaEnviar.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'La lista no existe.'})
+
+
+class EnviadaListView(ListView):
+    model = Enviada
+    queryset = Enviada.objects.filter(activo=True, terminado=False, listaenviar__terminado=True, listaenviar__activo=True)
+    context_object_name = 'enviadas'
+    template_name = 'pages/enviadas/listar_enviadas.html'
+    ordering = ('-creado',)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["header_page"] = "Enviadas"
+        context["card_title"] = "Licitaciones enviadas"
+        context["list_url"] = reverse_lazy('seguros:listar_enviadas')
+        return context
+
+
+class EnviadaDetailView(DetailView):
+    model = Enviada
+    template_name = 'pages/enviadas/detalle_enviada.html'
+    context_object_name = 'enviada'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["header_page"] = "Detalle Enviaada"
+        context["card_title"] = f"Detalle Licitación Enviaada - Siniestro N°: {self.object.listaenviar.preparada.aprobada.licitacion.numero_siniestro}"
+        context["list_url"] = reverse_lazy('seguros:listar_enviadas')
+        return context
+    
 
 
 # class BuscarListView(ListView):

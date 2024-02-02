@@ -42,58 +42,58 @@
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
           
-          <li class="nav-header">Estados</li>
+          {% comment %} <li class="nav-header">Estados</li> {% endcomment %}
           <li class="nav-item">
             <a href={% url "seguros:listar_licitaciones" %} class="nav-link">
-              <i class="nav-icon far fa-calendar-alt"></i>
+              <i class="nav-icon fa fa-plus"></i>
               <p>
                 Licitaciones
-                <span class="badge badge-info right">2</span>
+                <span class="badge badge-info right"></span>
               </p>
             </a>
           </li>
           <li class="nav-item">
             <a href={% url "seguros:listar_aprobadas" %} class="nav-link">
-              <i class="nav-icon far fa-calendar-alt"></i>
+              <i class="nav-icon fa fa-check"></i>
               <p>
                 Aprobadas
-                <span class="badge badge-info right">2</span>
+                <span class="badge badge-info right"></span>
               </p>
             </a>
           </li>
           <li class="nav-item">
-            <a href="pages/calendar.html" class="nav-link">
-              <i class="nav-icon far fa-calendar-alt"></i>
+            <a href={% url "seguros:listar_preparadas" %} class="nav-link">
+              <i class="nav-icon fas fa-dolly"></i>
               <p>
                 En Preparación
-                <span class="badge badge-info right">2</span>
+                <span class="badge badge-info right"></span>
               </p>
             </a>
           </li>
           <li class="nav-item">
-            <a href="pages/calendar.html" class="nav-link">
-              <i class="nav-icon far fa-calendar-alt"></i>
+            <a href={% url "seguros:listar_listasenviar" %} class="nav-link">
+              <i class="nav-icon fa fa-cubes"></i>
               <p>
                 Listo para enviar
-                <span class="badge badge-info right">2</span>
+                <span class="badge badge-info right"></span>
               </p>
             </a>
           </li>
           <li class="nav-item">
-            <a href="pages/calendar.html" class="nav-link">
-              <i class="nav-icon far fa-calendar-alt"></i>
+            <a href={% url "seguros:listar_enviadas" %} class="nav-link">
+              <i class="nav-icon fa fa-truck"></i>
               <p>
                 Enviadas
-                <span class="badge badge-info right">2</span>
+                <span class="badge badge-info right"></span>
               </p>
             </a>
           </li>
           <li class="nav-item">
             <a href="pages/calendar.html" class="nav-link">
-              <i class="nav-icon far fa-calendar-alt"></i>
+              <i class="nav-icon fa fa-spinner"></i>
               <p>
                 Terminadas
-                <span class="badge badge-info right">2</span>
+                <span class="badge badge-info right"></span>
               </p>
             </a>
           </li>

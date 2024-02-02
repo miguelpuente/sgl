@@ -1,0 +1,66 @@
+{% extends "includes/base/base.html" %}
+
+{% load humanize %}
+
+{% block contenido %}
+
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>{{ header_page }}</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href={% url "seguros:listar_licitaciones" %}>Home</a></li>
+            <li class="breadcrumb-item active"><a href={{list_url}}>{{ header_page }}</a></li>
+          </ol>
+        </div>
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="row">
+      <div class="col-md-12">
+        
+        <!-- general form elements -->
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">{{card_title}}</h3>
+          </div>
+          <!-- /.card-header -->
+        
+          <div class="card-body">
+            <div class="row">
+
+
+
+              
+
+            </div>
+          </div>
+          <!-- /.card-body -->
+
+          <div class="card-footer">
+            <a href={{ list_url }} class="btn btn-info btn-sm">Volver</a>
+            <a class="btn btn-warning btn-sm" href={% url "seguros:editar_licitacion" licitacion.id %}>
+              <i class="fas fa-pencil-alt">
+              </i>
+              Editar
+            </a>
+          </div>
+          <!-- /.card-footer -->
+
+        </div>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+{% endblock contenido %}

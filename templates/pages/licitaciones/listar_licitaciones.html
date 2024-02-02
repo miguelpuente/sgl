@@ -60,7 +60,7 @@
 
             <td>
                 {% if licitacion.monto %}
-                    $ {{ licitacion.monto|floatformat:2|intcomma }}
+                    ${{ licitacion.monto|floatformat:2|intcomma }}
                 {% endif %}
             </td>
 
@@ -81,7 +81,7 @@
             </td>
 
         <td class="project-actions text-right">
-            <a class="btn btn-primary btn-sm" href="#">
+            <a class="btn btn-primary btn-sm" href={% url "seguros:detalle_licitacion" licitacion.id %}>
                 <i class="fas fa-folder">
                 </i>
                 Ver

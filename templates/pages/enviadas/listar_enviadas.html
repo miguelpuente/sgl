@@ -1,0 +1,97 @@
+{% extends "includes/componentes/listado.html" %}
+
+{% load static %}
+{% load humanize %}
+
+{% block columnas %}
+    <tr>
+        <th>Fecha Enviada</th>
+        <th>Artículos</th>
+        <th>Seguro</th>
+        <th>Siniestro</th>
+        <th>Localidad</th>
+        <th>OC</th>
+        <th>Taller</th>
+        <th>Transporte</th>
+        <th>Usuario</th>
+        <th>Sucursal</th>
+        <th>Acciones</th>
+    </tr>
+{% endblock columnas %}
+
+{% block filas %}
+    {% for enviada in enviadas %}
+    <tr>
+            <td>
+                {% if enviada.creado %}
+                    {{ enviada.creado|date:'d/m/Y' }}
+                {% endif %}
+            </td>
+            
+            <td>
+                {% if enviada.listaenviar.preparada.cantidad_articulos_listos %}
+                    {{ enviada.listaenviar.preparada.cantidad_articulos_listos }}
+                {% endif %}
+            </td>
+
+            <td>
+                {% if enviada.listaenviar.preparada.aprobada.licitacion.aseguradora %}
+                    {{ enviada.listaenviar.preparada.aprobada.licitacion.aseguradora }}
+                {% endif %}
+            </td>
+            
+            <td>
+                {% if enviada.listaenviar.preparada.aprobada.licitacion.numero_siniestro %}
+                    {{ enviada.listaenviar.preparada.aprobada.licitacion.numero_siniestro }}
+                {% endif %}
+            </td>
+
+            <td>
+                {% if enviada.listaenviar.preparada.aprobada.licitacion.datos_entrega.localidad %}
+                    {{ enviada.listaenviar.preparada.aprobada.licitacion.datos_entrega.localidad }}
+                {% endif %}
+            </td>
+
+            <td>
+                {% if enviada.listaenviar.preparada.aprobada.numero_orden_compra %}
+                    {{ enviada.listaenviar.preparada.aprobada.numero_orden_compra }}
+                {% endif %}
+            </td>
+
+            <td>
+                {% if enviada.listaenviar.preparada.aprobada.taller %}
+                    {{ enviada.listaenviar.preparada.aprobada.taller }}
+                {% endif %}
+            </td>
+
+            <td>
+                {% if enviada.listaenviar.preparada.aprobada.transporte %}
+                    {{ enviada.listaenviar.preparada.aprobada.transporte }}
+                {% endif %}
+            </td>
+
+            <td>
+                {{ enviada.listaenviar.preparada.aprobada.licitacion.user }}
+            </td>
+
+            <td>
+                {% if enviada.listaenviar.preparada.aprobada.licitacion.sucursal %}
+                    {{ enviada.listaenviar.preparada.aprobada.licitacion.sucursal }}
+                {% endif %}
+            </td>
+
+        <td class="project-actions text-right">
+            <a class="btn btn-primary btn-sm" href={% url "seguros:detalle_enviada" enviada.id %}>
+                <i class="fas fa-folder">
+                </i>
+                Ver
+            </a>
+            <a class="btn btn-warning btn-sm" href="">
+                <i class="fas fa-pencil-alt">
+                </i>
+                Editar
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+{% endblock filas %}

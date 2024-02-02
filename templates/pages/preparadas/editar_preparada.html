@@ -1,0 +1,196 @@
+{% extends "includes/base/base.html" %}
+
+{% load humanize %}
+
+{% block contenido %}
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1>{{ header_page }}</h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href={% url "seguros:listar_licitaciones" %}>Home</a></li>
+              <li class="breadcrumb-item active"><a href={{list_url}}>{{ header_page }}</a></li>
+            </ol>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-md-12">
+          <!-- general form elements -->
+          <div class="card card-primary">
+            <div class="card-header">
+              <h3 class="card-title">{{card_title}}</h3>
+            </div>
+            <!-- /.card-header -->
+            <!-- form start -->
+            <form method="POST" name="form" id="id_form">
+              {% csrf_token %}
+
+              <input type="hidden" name='accion' value={{accion}}>
+              <div class="card-header">
+                <div class="row">
+
+                    <div class="card card-primary w-100">
+                      <div class="card-header">
+                        <h3 class="card-title">Operación</h3>
+                        <div class="card-tools">
+                          <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
+                          </button>
+                        </div>
+                        <!-- /.card-tools -->
+                      </div>
+                      <!-- /.card-header -->
+                      <div class="card-body">
+
+                        <div class="row">
+
+                          <div class="col-md-3 col-xl-2">
+                            <div class="col-md-12">
+                              <div class="form-group">
+                                <label for="inputCantidadArticulosListos">Artículos Listos</label>
+                                <input type="number" class="form-control" step="any" maxlength="4" name={{form.cantidad_articulos_listos.name}} value={{form.cantidad_articulos_listos.value}} >
+                              </div>
+                            </div>
+
+                            <div class="col-md-12">
+                              <div class="form-group">
+                                <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                                  {{ form.terminado }}
+                                  <label class="custom-control-label" for="customSwitch3">Lista Enviar</label>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="col-md-9 col-xl-10">
+                            <div class="form-group">
+                              <label for="inputComentario">Comentario</label>
+                              {{form.comentario}}
+                            </div>
+                          </div>
+
+                        </div>
+                          
+                      </div>
+                      <!-- /.card-body -->
+                    </div>
+
+                </div>
+              </div>
+              <!-- /.card-body -->
+
+              <div class="card-footer">
+                <button type="submit" class="btn btn-primary" id="id_enviar">
+                  {% if accion == 'agregar' %}
+                    Crear
+                  {% else %}
+                    Guardar Cambios
+                  {% endif %}
+                </button>
+                <a href={{ list_url }} class="btn btn-info">Cancelar</a>
+              </div>
+            </form>
+          </div>
+          <!-- /.card -->
+        </div>
+      </div>
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+{% endblock contenido %}
+
+{% block script %}
+  <script type="application/javascript">
+    $(function () {
+
+      {% if form.errors %}
+        let errors = '';
+        {% for field in form %}
+          {% for error in field.errors %}
+            errors += '{{ error }}\n';
+          {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+          errors += '{{ error }}\n';
+        {% endfor %}
+        Swal.fire({
+          title: 'Error!',
+          text: errors,
+          icon: 'error'
+        });
+      {% endif %}
+
+      $('form').on('submit', function (e) {
+        e.preventDefault();
+        let parameters = $(this).serializeArray();
+        $.ajax({
+          url: window.location.pathname,
+          type: 'POST',
+          data: parameters,
+          dataType: 'json'
+        }).done(function (data) {
+          if (!data.hasOwnProperty('error')) {
+            // Si no hay errores generales, redirigir
+            location.href = '{{ list_url }}';
+            return false;
+          }
+      
+          // Si hay errores generales, mostrarlos
+          alerta_error(data.error);
+
+          // Si hay errores del formulario, mostrarlos también
+          if (data.hasOwnProperty('form_errors')) {
+            let formErrors = '';
+            for (let error in data.form_errors) {
+              formErrors += data.form_errors[error].join('\n');
+            }
+            Swal.fire({
+              title: 'Error en el formulario',
+              text: formErrors,
+              icon: 'error'
+            });
+          }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+          alerta_error(textStatus + ': ' + errorThrown);
+        }).always(function (data) {
+
+        });
+      });
+
+      document.querySelector('[name="cantidad_articulos_listos"]').addEventListener('change', function(event) {
+        let CantidadArticulosInput = event.target;
+        let valor = CantidadArticulosInput.value;
+
+        if (!/^\d+$/.test(valor) || valor.length > 4) {
+            alerta_error('Artículos Listos debe ser un número positivo de no más de 4 dígitos');
+            CantidadArticulosInput.value = '';
+            CantidadArticulosInput.focus();
+        }
+      });
+
+      document.querySelector('[name="terminado"]').addEventListener('change', function(event) {
+        var terminadoInput = event.target;
+        var cantidadArticulosListoInput = document.querySelector('[name="cantidad_articulos_listos"]');
+        var comentarioInput = document.querySelector('[name="comentario"]');
+        var cantidadArticulosListo = parseInt(cantidadArticulosListoInput.value);
+        var articulos = parseInt('{{ articulos }}');  // Ajusta esto según tu template
+        
+        if (terminadoInput.checked && (cantidadArticulosListo !== articulos && cantidadArticulosListo <= 0 || comentarioInput.value === '')) {
+            alerta_error('Para cambiar "Lista Enviar", "Artículos Listos" debe ser igual a ' + articulos + '. Si desea enviar con faltante, agregue un comentario.');
+            terminadoInput.checked = false;
+        }
+      });
+
+    });
+  </script>
+{% endblock script %}

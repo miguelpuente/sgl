@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.urls import path
-from .views import Inicio, LicitacionesListView, AprobadasListView, AprobadaUpdateView, LicitacionCreateView, LicitacionUpdateView, LicitacionDeleteView, ObtenerPeritosView
+from .views import Inicio, LicitacionDetailView, LicitacionesListView, AprobadasListView, AprobadaDetailView, AprobadaUpdateView, EnviadaListView, EnviadaDetailView, LicitacionCreateView, LicitacionUpdateView, LicitacionDeleteView, ListasEnviarListView, ListasEnviarView, PreparadasListView, PreparadaDetailView, PreparadaUpdateView, ObtenerPeritosView
 
 app_name = 'apps.seguros'
 
@@ -25,13 +25,19 @@ urlpatterns = [
     ),
 
     path(
-        route='editar_licitacion/<uuid:pk>',
+        route='detalle_licitacion/<uuid:pk>/',
+        view=login_required(LicitacionDetailView.as_view()),
+        name='detalle_licitacion'
+    ),
+
+    path(
+        route='editar_licitacion/<uuid:pk>/',
         view=login_required(LicitacionUpdateView.as_view()),
         name='editar_licitacion'
     ),
 
     path(
-        route='eliminar_licitacion/<uuid:pk>',
+        route='eliminar_licitacion/<uuid:pk>/',
         view=login_required(LicitacionDeleteView.as_view()),
         name='eliminar_licitacion'
     ),
@@ -43,9 +49,57 @@ urlpatterns = [
     ),
 
     path(
-        route='editar_aprobada/<uuid:pk>',
+        route='detalle_aprobada/<uuid:pk>/',
+        view=login_required(AprobadaDetailView.as_view()),
+        name='detalle_aprobada'
+    ),
+
+    path(
+        route='editar_aprobada/<uuid:pk>/',
         view=login_required(AprobadaUpdateView.as_view()),
         name='editar_aprobada'
+    ),
+
+    path(
+        route='preparadas/',
+        view=login_required(PreparadasListView.as_view()),
+        name='listar_preparadas'
+    ),
+
+    path(
+        route='detalle_preparada/<uuid:pk>/',
+        view=login_required(PreparadaDetailView.as_view()),
+        name='detalle_preparada'
+    ),
+
+    path(
+        route='editar_preparada/<uuid:pk>/',
+        view=login_required(PreparadaUpdateView.as_view()),
+        name='editar_preparada'
+    ),
+
+    path(
+        route='listar_listasenviar/',
+        view=login_required(ListasEnviarListView.as_view()),
+        name='listar_listasenviar'
+    ),
+
+    path(
+        route='enviar_listasenviar/<uuid:lista_id>/',
+        view=login_required(ListasEnviarView.as_view()),
+        name='enviar_listasenviar'
+    ),
+
+    path(
+        route='enviadas/',
+        view=login_required(EnviadaListView.as_view()),
+        name='listar_enviadas'
+    ),
+
+    path(
+        route='detalle_enviada/<uuid:pk>/',
+        view=login_required(EnviadaDetailView.as_view()),
+        name='detalle_enviada'
     ),
 
     # path(

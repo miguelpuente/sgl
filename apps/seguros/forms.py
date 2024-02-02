@@ -1,7 +1,7 @@
 from django import forms
 from apps.auto.models import Modelo
 from apps.direccion.models import DatoEntrega, Localidad, Provincia
-from .models import Licitacion, Aprobada, Demora, Aseguradora, Perito, Taller, Transporte
+from .models import Licitacion, Aprobada, Demora, Aseguradora, Perito, Preparada, Taller, Transporte
 
 class LicitacioForm(forms.ModelForm):
 
@@ -20,6 +20,7 @@ class LicitacioForm(forms.ModelForm):
         widget=forms.NumberInput(
             attrs={
                 'class': 'form-control',
+                'step': 'any',
                 'maxlength': 20,
                 'decimal_places': 0,
                 'autocomplete': False,
@@ -46,6 +47,7 @@ class LicitacioForm(forms.ModelForm):
         widget=forms.NumberInput(
             attrs={
                 'class': 'form-control',
+                'step': 'any',
                 'maxlength': 20,
                 'decimal_places': 0,
                 'autocomplete': False,
@@ -65,6 +67,7 @@ class LicitacioForm(forms.ModelForm):
         widget=forms.NumberInput(
             attrs={
                 'class': 'form-control',
+                'step': 'any',
                 'maxlength': 4,
                 'decimal_places': 0,
                 'autocomplete': False,
@@ -82,6 +85,7 @@ class LicitacioForm(forms.ModelForm):
         widget=forms.NumberInput(
             attrs={
                 'class': 'form-control',
+                'step': 'any',
                 'maxlength': 10,
                 'decimal_places': 2,
                 'autocomplete': False,
@@ -139,6 +143,7 @@ class LicitacioForm(forms.ModelForm):
         widget=forms.NumberInput(
             attrs={
                 'class': 'form-control',
+                'step': 'any',
                 'maxlength': 10,
                 'decimal_places': 2,
                 'autocomplete': False,
@@ -207,16 +212,24 @@ class AprobadaForm(forms.ModelForm):
                 'class': 'form-control',
                 'type': 'date',
                 'autofocus': True,
-                'required': True,
             }
         ),
         required= True
     )
 
-    numero_orden_compra = forms.IntegerField(
+    def clean_fecha_aprobado(self):
+        fecha_aprobado = self.cleaned_data['fecha_aprobado']
+
+        if fecha_aprobado is None:
+            raise forms.ValidationError('Este campo es obligatorio.')
+
+        return fecha_aprobado
+
+    numero_orden_compra = forms.DecimalField(
         widget=forms.NumberInput(
             attrs={
                 'class': 'form-control',
+                'step': 'any',
                 'maxlength': 20,
                 'decimal_places': 0,
                 'autocomplete': False,
@@ -231,10 +244,11 @@ class AprobadaForm(forms.ModelForm):
 
         return numero
 
-    numero_nota_pedido = forms.IntegerField(
+    numero_nota_pedido = forms.DecimalField(
         widget=forms.NumberInput(
             attrs={
                 'class': 'form-control',
+                'step': 'any',
                 'maxlength': 20,
                 'decimal_places': 0,
                 'autocomplete': False,
@@ -292,4 +306,76 @@ class AprobadaForm(forms.ModelForm):
             data['error'] = str(e)
         return data
 
+class PreparadaForm(forms.ModelForm):
+    class Meta:
+        model = Preparada
+        fields = ['cantidad_articulos_listos', 'comentario', 'terminado']
 
+    cantidad_articulos_listos = forms.DecimalField(
+        widget=forms.NumberInput(
+            attrs={
+                'class': 'form-control',
+                'step': 'any',
+                'maxlength': 4,
+                'decimal_places': 0,
+                'autocomplete': False,
+            }
+        ),
+        required = True
+    )
+
+    def cantidad_articulos_listos(self):
+        numero = self.cleaned_data.get('cantidad_articulos_listos')
+        if numero is not None and numero < 0:
+            raise forms.ValidationError('El número debe ser positivo.')
+        return numero
+    
+    comentario = forms.CharField(
+        widget=forms.Textarea(
+            attrs={
+                'class': 'form-control',
+                'rows': 3,
+                'autocomplete': False,
+            }
+        ),
+        required=False
+    )
+    
+    terminado = forms.BooleanField(
+        widget = forms.CheckboxInput(
+            attrs={
+                'class' : 'custom-control-input',
+                'id' : 'customSwitch3',
+            }
+        ),
+        required= False
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        cantidad_articulos_listo = cleaned_data.get('cantidad_articulos_listos')
+        comentario = cleaned_data.get('comentario')
+        terminado = cleaned_data.get('terminado')
+
+        articulos = self.instance.aprobada.licitacion.cantidad_articulos
+        
+        if terminado and (
+        (cantidad_articulos_listo is not None and cantidad_articulos_listo != articulos and cantidad_articulos_listo <= 0) or
+        not comentario):
+            self.add_error('comentario', forms.ValidationError(
+            f'Para cambiar "Lista Enviar", "Artículos Listos" debe ser igual a {articulos}. Si desea enviar con faltante, agregue un comentario'
+        ))
+
+        return cleaned_data
+
+    def save(self, commit=True):
+        data={}
+        form = super()
+        try:
+            if form.is_valid():
+                form.save()
+            else:
+                data['error'] = form.errors
+        except Exception as e:
+            data['error'] = str(e)
+        return data

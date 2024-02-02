@@ -1,0 +1,457 @@
+{% extends "includes/base/base.html" %}
+
+{% load humanize %}
+
+{% block contenido %}
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1>{{ header_page }}</h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href={% url "seguros:listar_licitaciones" %}>Home</a></li>
+              <li class="breadcrumb-item active"><a href={{list_url}}>{{ header_page }}</a></li>
+            </ol>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+
+      <!-- Licitación -->
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card card-primary collapsed-card">
+            <div class="card-header">
+              <h3 class="card-title">Licitación</h3>
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
+                </button>
+              </div>
+              <!-- /.card-tools -->
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+
+              <div class="row">
+
+                <!-- left column -->
+                <div class="col-md-4">
+                    <div class="card card-primary">
+                      <div class="card-header">
+                        <h3 class="card-title">Presupuesto</h3>
+                        <div class="card-tools">
+                          <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
+                          </button>
+                        </div>
+                        <!-- /.card-tools -->
+                      </div>
+                      <!-- /.card-header -->
+                      <div class="card-body">
+                        
+                        <div class="row">
+                          <div class="col-lg-12">
+                            <div class="form-group">
+                              <label for="inputPresupuesto">N° Presupuesto</label>
+                              <input type="text" class="form-control" value="{{preparada.aprobada.licitacion.numero_presupuesto}}" disabled>
+                            </div>
+                          </div>
+
+                          <div class="col-lg-6">
+                            <div class="form-group">
+                              <label for="inputMonto">Monto</label>
+                              <input type="text" class="form-control" value="{{preparada.aprobada.licitacion.monto}}" disabled>
+                            </div>                          
+                          </div>
+
+                          <div class="col-lg-6">
+                            <div class="form-group">
+                              <label for="inputDemora">Demora</label>
+                              <input type="text" class="form-control" value="{{preparada.aprobada.licitacion.demora}}" disabled>
+                            </div>
+                          </div>
+
+                          <div class="col-4">
+                            <div class="form-group">
+                              <label for="inputCantidadArticulos">Artículos</label>
+                              <input type="text" class="form-control" value="{{preparada.aprobada.licitacion.cantidad_articulos}}" disabled>
+                            </div>
+                          </div>
+
+                          <div class="col-8">
+                            <div class="form-group">
+                              <label for="inputPerito">Costo Transporte</label>
+                              <input type="text" class="form-control" value="{{ preparada.aprobada.licitacion.costo_transporte }}" disabled>    
+                            </div>
+                          </div>
+
+                        </div>                        
+                      </div>
+                      <!-- /.card-body -->
+                    </div>
+                </div>
+
+                <!-- center column -->
+                <div class="col-md-4">
+                    <div class="card card-primary">
+                      <div class="card-header">
+                        <h3 class="card-title">Seguro</h3>
+                        <div class="card-tools">
+                          <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
+                          </button>
+                        </div>
+                        <!-- /.card-tools -->
+                      </div>
+                      <!-- /.card-header -->
+                      <div class="card-body">
+
+                        <div class="form-group">
+                          <label for="inputSiniestro">N° Siniestro</label>
+                          <input type="text" class="form-control" value="{{preparada.aprobada.licitacion.numero_siniestro}}" disabled>
+                        </div>
+
+                        <div class="row">
+                          <div class="col-6">
+                            <div class="form-group">
+                              <label for="inputAseguradora">Aseguradora</label>
+                              <input type="text" class="form-control" value="{{preparada.aprobada.licitacion.aseguradora}}" disabled>
+                            </div>
+                          </div>
+                          
+                          <div class="col-6">
+                            <div class="form-group">
+                              <label for="inputPerito">Perito</label>
+                              <input type="text" class="form-control" 
+                              value=
+                              {% if aprobada.licitacion.perito %}
+                                  "{{preparada.aprobada.licitacion.perito}}" 
+                              {% else %}
+                                  ""
+                              {% endif %}
+                              disabled>
+                            </div>
+                          </div>
+                        </div>
+
+                      </div>
+                      <!-- /.card-body -->
+                    </div>
+                </div>
+
+                <!-- rigth column -->
+                <div class="col-md-4">
+                    <div class="card card-primary">
+                      <div class="card-header">
+                        <h3 class="card-title">Vehículo</h3>
+                        <div class="card-tools">
+                          <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
+                          </button>
+                        </div>
+                        <!-- /.card-tools -->
+                      </div>
+                      <!-- /.card-header -->
+                      <div class="card-body">
+                        <div class="row">
+                          <div class="col-6">
+                            <div class="form-group">
+                              <label for="inputVehiculo">Vehículo</label>
+                              <input type="text" class="form-control" value="{{preparada.aprobada.licitacion.vehiculo}}" disabled>
+                            </div>
+                          </div>
+                          
+                          <div class="col-6">
+                            <div class="form-group">
+                              <label for="inputDominio">Dominio</label>
+                              <input type="text" class="form-control" value="{{preparada.aprobada.licitacion.dominio}}" disabled>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="row">
+                          <div class="col-6">
+                            <div class="form-group">
+                              <label for="inputProvincia">Provincia</label>
+                              <input type="text" class="form-control" value="{{preparada.aprobada.licitacion.datos_entrega.localidad.provincia}}" disabled>
+                            </div>
+                          </div>
+                          
+                          <div class="col-6">
+                            <div class="form-group">
+                              <label for="inputLocalidad">Localidad</label>
+                              <input type="text" class="form-control" value="{{preparada.aprobada.licitacion.datos_entrega.localidad}}" disabled>
+                            </div>
+                          </div>
+                        </div>
+                          
+                      </div>
+                      <!-- /.card-body -->
+                    </div>
+
+                      <div class="card card-primary">
+                        <div class="card-header">
+                          <h3 class="card-title">Aprobado</h3>
+                          <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
+                            </button>
+                          </div>
+                          <!-- /.card-tools -->
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                          <div class="row">
+                            <div class="col-6">
+
+                              <div class="form-group">
+                                <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                                  <input type="checkbox" class="custom-control-input" id="customSwitch3" disabled
+                                  {% if preparada.aprobada.licitacion.terminado %}checked{% endif %}
+                                  >
+                                  <label class="custom-control-label" for="customSwitch3">Aprobada</label>
+                                  </div>
+                              </div>
+                            </div>
+                          </div>      
+                        </div>
+                        <!-- /.card-body -->
+                      </div>
+
+                </div>
+                
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+      <!-- /.Licitación -->
+
+      <!-- Aprobada -->
+      <div class="row">
+        <div class="card card-primary w-100">
+          <div class="card-header">
+            <h3 class="card-title">Aprobada</h3>
+            <div class="card-tools">
+              <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
+              </button>
+            </div>
+            <!-- /.card-tools -->
+          </div>
+          <!-- /.card-header -->
+          <div class="card-body">
+            <div class="row">
+
+              <!-- left column -->
+              <div class="col-lg-4 col-xl-5">
+                <div class="card card-primary">
+                  <div class="card-header">
+                    <h3 class="card-title">Operación</h3>
+                    <div class="card-tools">
+                      <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
+                      </button>
+                    </div>
+                    <!-- /.card-tools -->
+                  </div>
+                  <!-- /.card-header -->
+                  <div class="card-body">
+
+                    <div class="row">
+
+                      <div class="col-xl-6">
+                        <div class="form-group">
+                          <label for="inputFechaAprobada">Fecha Aprobada</label>
+                          <input type="date" value="{{ aprobada.fecha_aprobado|date:'Y-m-d' }}" class="form-control" disabled>
+                        </div>
+                      </div>
+
+                      <div class="col-xl-6">
+                        <div class="form-group">
+                          <label for="inputNOrdebCompra">N° Orden Compra</label>
+                          <input type="text" class="form-control" 
+                          value=
+                          {% if aprobada.numero_orden_compra %}
+                            "{{aprobada.numero_orden_compra}}" 
+                          {% else %}
+                            ""
+                          {% endif %}
+                          disabled>
+                        </div>
+                      </div>
+
+                      <div class="col-xl-12">
+                        <div class="form-group">
+                          <label for="inputNNotaPedido">N° Pedido</label>
+                          <input type="text" class="form-control" 
+                          value=
+                          {% if aprobada.numero_nota_pedido %}
+                            "{{aprobada.numero_nota_pedido}}" 
+                          {% else %}
+                            ""
+                          {% endif %}
+                          disabled>
+                        </div>
+                      </div>
+
+                    </div>
+                      
+                  </div>
+                  <!-- /.card-body -->
+                </div>
+              </div>
+
+              <!-- center column -->
+              <div class="col-lg-5 col-xl-5">
+                <div class="card card-primary">
+                  <div class="card-header">
+                    <h3 class="card-title">Info</h3>
+                    <div class="card-tools">
+                      <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
+                      </button>
+                    </div>
+                    <!-- /.card-tools -->
+                  </div>
+                  <!-- /.card-header -->
+                  <div class="card-body">
+
+                    <div class="row">
+                      <div class="col-xl-6">
+                        <div class="form-group">
+                          <label for="inputTaller">Taller</label>
+                          <input type="text" class="form-control" 
+                          value=
+                          {% if aprobada.taller %}
+                            "{{aprobada.taller}}" 
+                          {% else %}
+                            ""
+                          {% endif %}
+                          disabled>
+                        </div>
+                      </div>
+                      
+                      <div class="col-xl-6">
+                        <div class="form-group">
+                          <label for="inputPerito">Transporte</label>
+                          <input type="text" class="form-control" 
+                          value=
+                          {% if aprobada.transporte %}
+                            "{{aprobada.transporte }}" 
+                          {% else %}
+                            ""
+                          {% endif %}
+                          disabled>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                  <!-- /.card-body -->
+                </div>
+              </div>
+
+              <!-- rigth column -->
+              <div class="col-lg-3 col-xl-2">
+                <div class="card card-primary">
+                  <div class="card-header">
+                    <h3 class="card-title">Preparación</h3>
+                    <div class="card-tools">
+                      <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
+                      </button>
+                    </div>
+                    <!-- /.card-tools -->
+                  </div>
+                  <!-- /.card-header -->
+                  <div class="card-body">
+                    <div class="row">
+                      
+                      <div class="col-12">
+                      
+                        <div class="form-group">
+                          <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                            <input type="checkbox" class="custom-control-input" id="customSwitch3" disabled
+                                {% if aprobada.terminado %}checked{% endif %}
+                                >
+                            <label class="custom-control-label" for="customSwitch3">Preparación</label>
+                            </div>
+                        </div>
+
+                      </div>
+                    </div>
+                  </div>
+                  <!-- /.card-body -->
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- /.Aprobada-->
+
+      <!-- En Preparación-->
+      <div class="row">
+
+        <!-- left column -->
+        <div class="col-md-12">
+          <div class="card card-primary collapsed-card">
+            <div class="card-header">
+              <h3 class="card-title">En Preparación</h3>
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
+                </button>
+              </div>
+              <!-- /.card-tools -->
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+
+              <div class="row">
+
+                <div class="col-3">
+                  <div class="col-12">
+                    <div class="form-group">
+                      <label for="inputCantidadArticulosListos">Artículos Listos</label>
+                      <input type="number" class="form-control" value={{enviada.listaenviar.preparada.cantidad_articulos_listos}} >
+                    </div>
+                  </div>
+
+                  <div class="col-12">
+                    <div class="form-group">
+                      <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                        <input type="checkbox" class="custom-control-input" id="customSwitch3" disabled
+                        {% if enviada.listaenviar.preparada.terminado %}checked{% endif %}
+                        >
+                        <label class="custom-control-label" for="customSwitch3">Lista Enviar</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-9">
+                  <div class="form-group">
+                    <label for="inputComentario">Comentario</label>
+                    <input type="text" class="form-control" value={{enviada.listaenviar.preparada.comentario}} >
+                  </div>
+                </div>
+
+              </div>
+                
+            </div>
+            <!-- /.card-body -->
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+{% endblock contenido %}
