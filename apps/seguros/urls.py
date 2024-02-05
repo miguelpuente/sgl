@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.urls import path
-from .views import Inicio, LicitacionDetailView, LicitacionesListView, AprobadasListView, AprobadaDetailView, AprobadaUpdateView, EnviadaListView, EnviadaDetailView, LicitacionCreateView, LicitacionUpdateView, LicitacionDeleteView, ListasEnviarListView, ListasEnviarView, PreparadasListView, PreparadaDetailView, PreparadaUpdateView, ObtenerPeritosView
+from .views import Inicio, LicitacionDetailView, LicitacionesListView, AprobadasListView, AprobadaDetailView, AprobadaUpdateView, EnviadaListView, EnviadaDetailView, LicitacionCreateView, LicitacionUpdateView, LicitacionDeleteView, ListasEnviarListView, ListasEnviarView, ListaEnviarDetailView, PreparadasListView, PreparadaDetailView, PreparadaUpdateView, ObtenerPeritosView
 
 app_name = 'apps.seguros'
 
@@ -88,6 +88,12 @@ urlpatterns = [
         route='enviar_listasenviar/<uuid:lista_id>/',
         view=login_required(ListasEnviarView.as_view()),
         name='enviar_listasenviar'
+    ),
+
+    path(
+        route='detalle_listaenviar/<uuid:pk>/',
+        view=login_required(ListaEnviarDetailView.as_view()),
+        name='detalle_listaenviar'
     ),
 
     path(

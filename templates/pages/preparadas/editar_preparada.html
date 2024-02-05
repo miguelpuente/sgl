@@ -178,12 +178,21 @@
         }
       });
 
+      $(document).ready(function(){
+        // Desactiva las flechas en todos los campos de número
+        $('input[type="number"]').on('keydown', function(e) {
+            if (e.which === 38 || e.which === 40) {
+                e.preventDefault();
+            }
+        });
+      });
+
       document.querySelector('[name="terminado"]').addEventListener('change', function(event) {
         var terminadoInput = event.target;
         var cantidadArticulosListoInput = document.querySelector('[name="cantidad_articulos_listos"]');
         var comentarioInput = document.querySelector('[name="comentario"]');
         var cantidadArticulosListo = parseInt(cantidadArticulosListoInput.value);
-        var articulos = parseInt('{{ articulos }}');  // Ajusta esto según tu template
+        var articulos = parseInt('{{ articulos }}');
         
         if (terminadoInput.checked && (cantidadArticulosListo !== articulos && cantidadArticulosListo <= 0 || comentarioInput.value === '')) {
             alerta_error('Para cambiar "Lista Enviar", "Artículos Listos" debe ser igual a ' + articulos + '. Si desea enviar con faltante, agregue un comentario.');

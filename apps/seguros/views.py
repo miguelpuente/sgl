@@ -377,6 +377,18 @@ class EnviadaListView(ListView):
         context["card_title"] = "Licitaciones enviadas"
         context["list_url"] = reverse_lazy('seguros:listar_enviadas')
         return context
+    
+class ListaEnviarDetailView(DetailView):
+    model = ListaEnviar
+    template_name = 'pages/listasenviar/detalle_listaenviar.html'
+    context_object_name = 'listasenviar'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["header_page"] = "Detalle Lista Enviar"
+        context["card_title"] = f"Detalle Lista Enviar - Siniestro N°: {self.object.preparada.aprobada.licitacion.numero_siniestro}"
+        context["list_url"] = reverse_lazy('seguros:listar_listasenviar')
+        return context
 
 
 class EnviadaDetailView(DetailView):
