@@ -3,7 +3,7 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a href={% url "seguros:inicio" %} class="brand-link">
-      <img src={% static "adminlte_3_2_0/dist/img/AdminLTELogo.png" %} alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+      <img src={% static "adminlte/dist/img/AdminLTELogo.png" %} alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
       <span class="brand-text font-weight-light">SGL</span>
     </a>
 
@@ -15,7 +15,7 @@
           {% if request.user.perfil.imagen and user.perfil.imagen.url %}
             <img src={{ user.perfil.imagen.url }} class="img-circle elevation-2" alt="User Image">
             {% else %}
-            <img src={% static "adminlte_3_2_0/dist/img/user2-160x160.jpg" %} class="img-circle elevation-2" alt="User Image">
+            <img src={% static "adminlte/dist/img/user2-160x160.jpg" %} class="img-circle elevation-2" alt="User Image">
           {% endif %}
         </div>
         <div class="info">
