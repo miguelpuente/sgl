@@ -458,7 +458,7 @@
 
               <!-- Enviada-->
               <div class="row">
-                <div class="card card-primary w-100">
+                <div class="card card-primary collapsed-card w-100">
                   <div class="card-header">
                     <h3 class="card-title">Enviada</h3>
                     <div class="card-tools">
@@ -508,14 +508,10 @@
 
             <div class="card-footer">
               <a href={{ list_url }} class="btn btn-info btn-sm">Volver</a>
-              {% with first_group=request.user.groups.all|first %}
-                {% if request.user == enviada.listaenviar.preparada.aprobada.licitacion.user or first_group.name == 'GERENTE_GENERAL' or first_group.name == 'GERENTE_SUCURSAL' and request.user.perfil.sucursal == enviada.listaenviar.preparada.aprobada.licitacion.sucursal or first_group.name == 'SUPERVISOR' and request.user.perfil.sucursal == enviada.listaenviar.preparada.aprobada.licitacion.sucursal %}
-                  <a class="btn btn-warning btn-sm" href={% url "seguros:editar_enviada" enviada.id %}>
-                    <i class="fas fa-pencil-alt"></i>
-                    Editar
-                  </a>
-                {% endif %}
-              {% endwith %}
+              {% comment %} <a class="btn btn-warning btn-sm" href={% url "seguros:editar_enviada" enviada.id %}>
+                <i class="fas fa-pencil-alt"></i>
+                Editar
+              </a> {% endcomment %}
             </div>
             <!-- /.card-footer -->
           </div>

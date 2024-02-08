@@ -3,9 +3,7 @@ from django.db import models
 
 class Provincia(models.Model):
     id = models.IntegerField(primary_key=True)
-    provincia = models.CharField(max_length=30)
-    creado = models.DateField(auto_now_add=True)
-    actualizado = models.DateTimeField(auto_now=True)
+    provincia = models.CharField(max_length=255)
 
     class Meta:
         verbose_name = 'Provincia'
@@ -18,10 +16,8 @@ class Provincia(models.Model):
 
 class Localidad(models.Model):
     id = models.IntegerField(primary_key=True)
-    localidad = models.CharField(max_length=60)
+    localidad = models.CharField(max_length=255)
     provincia = models.ForeignKey(Provincia, on_delete=models.PROTECT)
-    creado = models.DateField(auto_now_add=True)
-    actualizado = models.DateTimeField(auto_now=True)
 
     class Meta:
         verbose_name = 'Localidad'

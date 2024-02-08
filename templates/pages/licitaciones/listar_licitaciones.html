@@ -71,7 +71,7 @@
             </td>
 
             <td>
-                {{ user }}
+                {{ licitacion.user }}
             </td>
 
             <td>
@@ -86,16 +86,25 @@
                 </i>
                 Ver
             </a>
-            <a class="btn btn-warning btn-sm" href={% url "seguros:editar_licitacion" licitacion.id %}>
-                <i class="fas fa-pencil-alt">
-                </i>
-                Editar
-            </a>
-            <a class="btn btn-danger btn-sm" href={% url "seguros:eliminar_licitacion" licitacion.id %}>
-                <i class="fas fa-trash">
-                </i>
-                Borrar
-            </a>
+
+            {% with first_group=request.user.groups.all|first %}
+                {% if request.user == licitacion.user or first_group.name == 'GERENTE_GENERAL' or first_group.name == 'GERENTE_SUCURSAL' and request.user.perfil.sucursal == licitacion.sucursal or first_group.name == 'SUPERVISOR' and request.user.perfil.sucursal == licitacion.sucursal %}
+                
+                    <a class="btn btn-warning btn-sm" href={% url "seguros:editar_licitacion" licitacion.id %}>
+                        <i class="fas fa-pencil-alt">
+                        </i>
+                        Editar
+                    </a>
+
+                    <a class="btn btn-danger btn-sm" href={% url "seguros:eliminar_licitacion" licitacion.id %}>
+                        <i class="fas fa-trash">
+                        </i>
+                        Borrar
+                    </a>
+
+                {% endif %}
+            {% endwith %}
+
         </td>
     </tr>
     {% endfor %}

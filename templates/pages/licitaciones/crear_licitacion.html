@@ -41,7 +41,7 @@
                 <input type="hidden" name='datos_entrega' value={{ form.datos_entrega.value }}>
               {% endif %}
               
-              <input type="hidden" name='accion' value={{accion}}>  
+              <input type="hidden" name='accion' value={{accion}}>
               <input type="hidden" name='user' value={{request.user.id}}>
               <input type="hidden" name='sucursal' value={{request.user.perfil.sucursal.id}}>
               <div class="card-header">
@@ -244,6 +244,7 @@
 
 {% block script %}
   <script type="application/javascript">
+    
     $(function () {
 
       {% if form.errors %}
@@ -299,6 +300,76 @@
 
         });
       });
+
+      $('select[name="aseguradora"]').on('change', function () {
+        let id = $(this).val();
+        let select_peritos = $('select[name="perito"]');
+        let opciones = '<option value="">---------</option>';
+        if(id ===''){
+          select_peritos.html(opciones);
+          return false;
+        }
+        $.ajax({
+          url: window.location.pathname,
+          type: 'POST',
+          data: {
+            'accion': 'buscar_perito_id',
+            'id': id
+          },
+          dataType: 'json',
+        }).done(function (data) {
+          if (!data.hasOwnProperty('error')) {
+            $.each(data, function (key, value) {
+              opciones+='<option value="'+value.id+'">'+value.nombre+'</option>';
+            });
+            // Actualizar las opciones del select
+            select_peritos.html(opciones);
+          } else {
+            // Mostrar un mensaje de error si la llamada AJAX falla
+            alerta_error(data.error);
+          }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+          // Mostrar un mensaje de error si la llamada AJAX falla
+          alerta_error(textStatus + ': ' + errorThrown);
+        }).always(function (data) {
+
+        });
+      })
+
+      $('select[name="provincia"]').on('change', function () {
+        let id = $(this).val();
+        let select_localidades = $('select[name="localidad"]');
+        let opciones = '<option value="">---------</option>';
+        if(id ===''){
+          select_localidades.html(opciones);
+          return false;
+        }
+        $.ajax({
+          url: window.location.pathname,
+          type: 'POST',
+          data: {
+            'accion': 'buscar_localidad_id',
+            'id': id
+          },
+          dataType: 'json',
+        }).done(function (data) {
+          if (!data.hasOwnProperty('error')) {
+            $.each(data, function (key, value) {
+              opciones+='<option value="'+value.id+'">'+value.nombre+'</option>';
+            });
+            // Actualizar las opciones del select
+            select_localidades.html(opciones);
+          } else {
+            // Mostrar un mensaje de error si la llamada AJAX falla
+            alerta_error(data.error);
+          }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+          alerta_error(textStatus + ': ' + errorThrown);
+        }).always(function (data) {
+          
+        });
+      })
+    
 
       document.querySelector('[name="numero_presupuesto"]').addEventListener('change', function(event) {
         let numeroPresupuestoInput = event.target;

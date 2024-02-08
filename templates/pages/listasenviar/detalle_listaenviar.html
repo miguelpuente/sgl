@@ -70,35 +70,35 @@
                                 <div class="col-lg-12">
                                   <div class="form-group">
                                     <label for="inputPresupuesto">N° Presupuesto</label>
-                                    <input type="text" class="form-control" value="{{listasenviar.preparada.aprobada.licitacion.numero_presupuesto}}" disabled>
+                                    <input type="text" class="form-control" value="{{listaenviar.preparada.aprobada.licitacion.numero_presupuesto}}" disabled>
                                   </div>
                                 </div>
 
                                 <div class="col-lg-6">
                                   <div class="form-group">
                                     <label for="inputMonto">Monto</label>
-                                    <input type="text" class="form-control" value="{{listasenviar.preparada.aprobada.licitacion.monto}}" disabled>
+                                    <input type="text" class="form-control" value="{{listaenviar.preparada.aprobada.licitacion.monto}}" disabled>
                                   </div>                          
                                 </div>
 
                                 <div class="col-lg-6">
                                   <div class="form-group">
                                     <label for="inputDemora">Demora</label>
-                                    <input type="text" class="form-control" value="{{listasenviar.preparada.aprobada.licitacion.demora}}" disabled>
+                                    <input type="text" class="form-control" value="{{listaenviar.preparada.aprobada.licitacion.demora}}" disabled>
                                   </div>
                                 </div>
 
                                 <div class="col-4">
                                   <div class="form-group">
                                     <label for="inputCantidadArticulos">Artículos</label>
-                                    <input type="text" class="form-control" value="{{listasenviar.preparada.aprobada.licitacion.cantidad_articulos}}" disabled>
+                                    <input type="text" class="form-control" value="{{listaenviar.preparada.aprobada.licitacion.cantidad_articulos}}" disabled>
                                   </div>
                                 </div>
 
                                 <div class="col-8">
                                   <div class="form-group">
                                     <label for="inputPerito">Costo Transporte</label>
-                                    <input type="text" class="form-control" value="{{ listasenviar.preparada.aprobada.licitacion.costo_transporte }}" disabled>    
+                                    <input type="text" class="form-control" value="{{ listaenviar.preparada.aprobada.licitacion.costo_transporte }}" disabled>    
                                   </div>
                                 </div>
 
@@ -124,14 +124,14 @@
 
                               <div class="form-group">
                                 <label for="inputSiniestro">N° Siniestro</label>
-                                <input type="text" class="form-control" value="{{listasenviar.preparada.aprobada.licitacion.numero_siniestro}}" disabled>
+                                <input type="text" class="form-control" value="{{listaenviar.preparada.aprobada.licitacion.numero_siniestro}}" disabled>
                               </div>
 
                               <div class="row">
                                 <div class="col-6">
                                   <div class="form-group">
                                     <label for="inputAseguradora">Aseguradora</label>
-                                    <input type="text" class="form-control" value="{{listasenviar.preparada.aprobada.licitacion.aseguradora}}" disabled>
+                                    <input type="text" class="form-control" value="{{listaenviar.preparada.aprobada.licitacion.aseguradora}}" disabled>
                                   </div>
                                 </div>
                                 
@@ -140,8 +140,8 @@
                                     <label for="inputPerito">Perito</label>
                                     <input type="text" class="form-control" 
                                     value=
-                                    {% if listasenviar.aprobada.licitacion.perito %}
-                                        "{{listasenviar.preparada.aprobada.licitacion.perito}}" 
+                                    {% if listaenviar.aprobada.licitacion.perito %}
+                                        "{{listaenviar.preparada.aprobada.licitacion.perito}}" 
                                     {% else %}
                                         ""
                                     {% endif %}
@@ -172,14 +172,14 @@
                                 <div class="col-6">
                                   <div class="form-group">
                                     <label for="inputVehiculo">Vehículo</label>
-                                    <input type="text" class="form-control" value="{{listasenviar.preparada.aprobada.licitacion.vehiculo}}" disabled>
+                                    <input type="text" class="form-control" value="{{listaenviar.preparada.aprobada.licitacion.vehiculo}}" disabled>
                                   </div>
                                 </div>
                                 
                                 <div class="col-6">
                                   <div class="form-group">
                                     <label for="inputDominio">Dominio</label>
-                                    <input type="text" class="form-control" value="{{listasenviar.preparada.aprobada.licitacion.dominio}}" disabled>
+                                    <input type="text" class="form-control" value="{{listaenviar.preparada.aprobada.licitacion.dominio}}" disabled>
                                   </div>
                                 </div>
                               </div>
@@ -188,14 +188,14 @@
                                 <div class="col-6">
                                   <div class="form-group">
                                     <label for="inputProvincia">Provincia</label>
-                                    <input type="text" class="form-control" value="{{listasenviar.preparada.aprobada.licitacion.datos_entrega.localidad.provincia}}" disabled>
+                                    <input type="text" class="form-control" value="{{listaenviar.preparada.aprobada.licitacion.datos_entrega.localidad.provincia}}" disabled>
                                   </div>
                                 </div>
                                 
                                 <div class="col-6">
                                   <div class="form-group">
                                     <label for="inputLocalidad">Localidad</label>
-                                    <input type="text" class="form-control" value="{{listasenviar.preparada.aprobada.licitacion.datos_entrega.localidad}}" disabled>
+                                    <input type="text" class="form-control" value="{{listaenviar.preparada.aprobada.licitacion.datos_entrega.localidad}}" disabled>
                                   </div>
                                 </div>
                               </div>
@@ -221,7 +221,7 @@
                                     <div class="form-group">
                                       <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
                                         <input type="checkbox" class="custom-control-input" id="customSwitch3" disabled
-                                        {% if listasenviar.preparada.aprobada.licitacion.terminado %}checked{% endif %}
+                                        {% if listaenviar.preparada.aprobada.licitacion.terminado %}checked{% endif %}
                                         >
                                         <label class="custom-control-label" for="customSwitch3">Aprobada</label>
                                         </div>
@@ -276,7 +276,7 @@
                               <div class="col-xl-6">
                                 <div class="form-group">
                                   <label for="inputFechaAprobada">Fecha Aprobada</label>
-                                  <input type="date" value="{{ listasenviar.preparada.aprobada.fecha_aprobado|date:'Y-m-d' }}" class="form-control" disabled>
+                                  <input type="date" value="{{ listaenviar.preparada.aprobada.fecha_aprobado|date:'Y-m-d' }}" class="form-control" disabled>
                                 </div>
                               </div>
 
@@ -285,8 +285,8 @@
                                   <label for="inputNOrdebCompra">N° Orden Compra</label>
                                   <input type="text" class="form-control" 
                                   value=
-                                  {% if listasenviar.preparada.aprobada.numero_orden_compra %}
-                                    "{{listasenviar.preparada.aprobada.numero_orden_compra}}" 
+                                  {% if listaenviar.preparada.aprobada.numero_orden_compra %}
+                                    "{{listaenviar.preparada.aprobada.numero_orden_compra}}" 
                                   {% else %}
                                     ""
                                   {% endif %}
@@ -299,8 +299,8 @@
                                   <label for="inputNNotaPedido">N° Pedido</label>
                                   <input type="text" class="form-control" 
                                   value=
-                                  {% if listasenviar.preparada.aprobada.numero_nota_pedido %}
-                                    "{{ listasenviar.preparada.aprobada.numero_nota_pedido}}" 
+                                  {% if listaenviar.preparada.aprobada.numero_nota_pedido %}
+                                    "{{ listaenviar.preparada.aprobada.numero_nota_pedido}}" 
                                   {% else %}
                                     ""
                                   {% endif %}
@@ -335,8 +335,8 @@
                                   <label for="inputTaller">Taller</label>
                                   <input type="text" class="form-control" 
                                   value=
-                                  {% if listasenviar.preparada.aprobada.taller %}
-                                    "{{ listasenviar.preparada.aprobada.taller}}" 
+                                  {% if listaenviar.preparada.aprobada.taller %}
+                                    "{{ listaenviar.preparada.aprobada.taller}}" 
                                   {% else %}
                                     ""
                                   {% endif %}
@@ -349,8 +349,8 @@
                                   <label for="inputPerito">Transporte</label>
                                   <input type="text" class="form-control" 
                                   value=
-                                  {% if listasenviar.preparada.aprobada.transporte %}
-                                    "{{ listasenviar.preparada.aprobada.transporte }}" 
+                                  {% if listaenviar.preparada.aprobada.transporte %}
+                                    "{{ listaenviar.preparada.aprobada.transporte }}" 
                                   {% else %}
                                     ""
                                   {% endif %}
@@ -384,7 +384,7 @@
                                 <div class="form-group">
                                   <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
                                     <input type="checkbox" class="custom-control-input" id="customSwitch3" disabled
-                                        {% if listasenviar.preparada.aprobada.terminado %}checked{% endif %}
+                                        {% if listaenviar.preparada.aprobada.terminado %}checked{% endif %}
                                         >
                                     <label class="custom-control-label" for="customSwitch3">Preparación</label>
                                     </div>
@@ -410,7 +410,7 @@
                   <div class="card-header">
                     <h3 class="card-title">En Preparación</h3>
                     <div class="card-tools">
-                      <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
+                      <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
                       </button>
                     </div>
                     <!-- /.card-tools -->
@@ -424,7 +424,7 @@
                         <div class="col-md-12">
                           <div class="form-group">
                             <label for="inputCantidadArticulosListos">Artículos Listos</label>
-                            <input type="number" class="form-control" value={{listasenviar.preparada.cantidad_articulos_listos}} disabled>
+                            <input type="number" class="form-control" value={{listaenviar.preparada.cantidad_articulos_listos}} disabled>
                           </div>
                         </div>
 
@@ -432,7 +432,7 @@
                           <div class="form-group">
                             <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
                               <input type="checkbox" class="custom-control-input" id="customSwitch3" disabled
-                              {% if listasenviar.preparada.terminado %}checked{% endif %}
+                              {% if listaenviar.preparada.terminado %}checked{% endif %}
                               >
                               <label class="custom-control-label" for="customSwitch3">Lista Enviar</label>
                             </div>
@@ -443,7 +443,7 @@
                       <div class="col-md-9 col-xl-10">
                         <div class="form-group">
                           <label for="inputComentario">Comentario</label>
-                          <input type="text" class="form-control" value={% if listasenviar.preparada.comentario %}{{listasenviar.preparada.comentario}}{% else %}""{% endif %} disabled>
+                          <input type="text" class="form-control" value={% if listaenviar.preparada.comentario %}"{{listaenviar.preparada.comentario}}"{% else %}""{% endif %} disabled>
                         </div>
                       </div>
 

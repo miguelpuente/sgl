@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django import forms
 from django.utils.decorators import method_decorator
 from django.views import View
@@ -12,7 +13,7 @@ from django.urls import reverse_lazy
 from django.views.generic import TemplateView, CreateView, DetailView, ListView, UpdateView, DeleteView
 from .models import Licitacion, Aprobada, Preparada, ListaEnviar, Enviada, Perito
 from apps.direccion.models import DatoEntrega, Provincia, Localidad
-from .forms import LicitacioForm, AprobadaForm, PreparadaForm
+from .forms import EnviadaForm, LicitacionForm, AprobadaForm, PreparadaForm
 
 class Inicio(TemplateView):
     template_name = 'pages/home.html'
@@ -35,10 +36,10 @@ class LicitacionesListView(ListView):
     #     data = {}
     #     try:
     #         accion = request.POST['accion']
-    #         if accion == 'buscardata':
-    #             data = []
-    #             for licitacion in Licitacion.objects.filter(activo=True, terminado=False):
-    #                 data.append(licitacion.toJSON())
+    #         if accion == 'buscar_perito_id':
+    #             data = [{'id':'', 'text':'---------'}]
+    #             for perito in Perito.objects.filter(aseguradora_id=request.POST['id']):
+    #                 data.append({'id': perito.id, 'text': perito.nombre})
     #         else:
     #             data['error'] = 'Ha ocurrido un error al cargar las licitaciones'
     #     except Exception as e:
@@ -55,16 +56,22 @@ class LicitacionesListView(ListView):
 
 class LicitacionCreateView(CreateView):
     model = Licitacion
-    form_class = LicitacioForm
+    form_class = LicitacionForm
     template_name = 'pages/licitaciones/crear_licitacion.html'
     success_url = reverse_lazy('seguros:listar_licitaciones')
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+    
 
     def post(self, request, *args, **kwargs):
         data = {}
         try:
-            action = request.POST['accion']
-            if action == 'agregar':
+            accion = request.POST['accion']
+            if accion == 'agregar':
                 form = self.get_form()
+                print(form)
                 if form.is_valid():
                     # Crea el objeto DatoEntrega
                     nuevo_dato_entrega = DatoEntrega.objects.create(localidad=form.cleaned_data['localidad'])
@@ -78,6 +85,16 @@ class LicitacionCreateView(CreateView):
                     # En el caso de errores, incluir detalles en el diccionario 'data'
                     data['error'] = 'NO se guardó la licitación'
                     data['form_errors'] = form.errors
+            elif accion == 'buscar_perito_id':
+                data = []
+                for perito in Perito.objects.filter(aseguradora_id=request.POST['id']):
+                    data.append({'id': perito.id, 'nombre': perito.nombre})
+                return JsonResponse(data, safe=False)
+            elif accion == 'buscar_localidad_id':
+                data = []
+                for localidad in Localidad.objects.filter(provincia_id=request.POST['id']):
+                    data.append({'id': localidad.id, 'nombre': localidad.localidad})
+                return JsonResponse(data, safe=False)
             else:
                 data['error'] = 'NO ha ingresado una acción válida'
         except Exception as e:
@@ -101,18 +118,23 @@ class LicitacionDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["header_page"] = "Detalle Licitación"
-        context["card_title"] = f"Detalle Licitación - Siniestro N°: {self.object.numero_siniestro}"
+        context["card_title"] = f"Siniestro - {self.object.numero_siniestro}"
         context["list_url"] = reverse_lazy('seguros:listar_licitaciones')
         return context
 
 
-
-class LicitacionUpdateView(UpdateView):
+class LicitacionUpdateView(UserPassesTestMixin, UpdateView):
     model = Licitacion
-    form_class = LicitacioForm
+    form_class = LicitacionForm
     template_name = 'pages/licitaciones/crear_licitacion.html'
     success_url = reverse_lazy('seguros:listar_licitaciones')
 
+    def test_func(self):
+        grupos = ['SUPERVISOR','GERENTE_SUCURSAL']  # Lista de nombres de grupos a verificar
+        pertenece_a_admin_sucursal = any(self.request.user.groups.filter(name=grupo).exists() for grupo in grupos) and self.request.user.perfil.sucursal == self.get_object().sucursal 
+        return self.request.user.is_authenticated and (pertenece_a_admin_sucursal or self.request.user == self.get_object().user or self.request.user.groups.filter(name='GERENTE_GENERAL').exists())
+
+    @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
         return super().dispatch(request, *args, **kwargs)
@@ -136,6 +158,18 @@ class LicitacionUpdateView(UpdateView):
                     # En el caso de errores, incluir detalles en el diccionario 'data'
                     data['error'] = 'NO se guardó la licitación'
                     data['form_errors'] = form.errors
+                    print(form.errors)
+            elif accion == 'buscar_perito_id':
+                data = []
+                for perito in Perito.objects.filter(aseguradora_id=request.POST['id']):
+                    data.append({'id': perito.id, 'nombre': perito.nombre})
+                return JsonResponse(data, safe=False)
+            elif accion == 'buscar_localidad_id':
+                data = []
+                for localidad in Localidad.objects.filter(provincia_id=request.POST['id']):
+                    data.append({'id': localidad.id, 'nombre': localidad.localidad})
+                return JsonResponse(data, safe=False)
+
             else:
                 data['error'] = 'NO ha ingresado una acción válida'
         except Exception as e:
@@ -151,10 +185,15 @@ class LicitacionUpdateView(UpdateView):
         return context
 
 
-class LicitacionDeleteView(DeleteView):
+class LicitacionDeleteView(UserPassesTestMixin, DeleteView):
     model = Licitacion
     template_name = 'pages/licitaciones/eliminar_licitacion.html'
     success_url = reverse_lazy('seguros:listar_licitaciones')
+
+    def test_func(self):
+        grupos = ['SUPERVISOR','GERENTE_SUCURSAL']  # Lista de nombres de grupos a verificar
+        pertenece_a_admin_sucursal = any(self.request.user.groups.filter(name=grupo).exists() for grupo in grupos) and self.request.user.perfil.sucursal == self.get_object().sucursal 
+        return self.request.user.is_authenticated and (pertenece_a_admin_sucursal or self.request.user == self.get_object().user or self.request.user.groups.filter(name='GERENTE_GENERAL').exists())
 
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -199,16 +238,21 @@ class AprobadaDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["header_page"] = "Detalle Aprobada"
-        context["card_title"] = f"Detalle Licitación Aprobada - Siniestro N°: {self.object.licitacion.numero_siniestro}"
+        context["card_title"] = f"Siniestro - {self.object.licitacion.numero_siniestro}"
         context["list_url"] = reverse_lazy('seguros:listar_aprobadas')
         return context
 
 
-class AprobadaUpdateView(UpdateView):
+class AprobadaUpdateView(UserPassesTestMixin, UpdateView):
     model = Aprobada
     form_class = AprobadaForm
     template_name = 'pages/aprobadas/editar_aprobada.html'
     success_url = reverse_lazy('seguros:listar_aprobadas')
+
+    def test_func(self):
+        grupos = ['SUPERVISOR','GERENTE_SUCURSAL']  # Lista de nombres de grupos a verificar
+        pertenece_a_admin_sucursal = any(self.request.user.groups.filter(name=grupo).exists() for grupo in grupos) and self.request.user.perfil.sucursal == self.get_object().licitacion.sucursal 
+        return self.request.user.is_authenticated and (pertenece_a_admin_sucursal or self.request.user == self.get_object().licitacion.user or self.request.user.groups.filter(name='GERENTE_GENERAL').exists())
 
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -277,16 +321,21 @@ class PreparadaDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["header_page"] = "Detalle En preparación"
-        context["card_title"] = f"Detalle Preparación - Siniestro N°: {self.object.aprobada.licitacion.numero_siniestro}"
-        context["list_url"] = reverse_lazy('seguros:listar_aprobadas')
+        context["card_title"] = f"Siniestro - {self.object.aprobada.licitacion.numero_siniestro}"
+        context["list_url"] = reverse_lazy('seguros:listar_preparadas')
         return context
 
 
-class PreparadaUpdateView(UpdateView):
+class PreparadaUpdateView(UserPassesTestMixin, UpdateView):
     model = Preparada
     form_class = PreparadaForm
     template_name = 'pages/preparadas/editar_preparada.html'
     success_url = reverse_lazy('seguros:listar_preparadas')
+
+    def test_func(self):
+        grupos = ['SUPERVISOR','GERENTE_SUCURSAL']  # Lista de nombres de grupos a verificar
+        pertenece_a_admin_sucursal = any(self.request.user.groups.filter(name=grupo).exists() for grupo in grupos) and self.request.user.perfil.sucursal == self.get_object().aprobada.licitacion.sucursal 
+        return self.request.user.is_authenticated and (pertenece_a_admin_sucursal or self.request.user == self.get_object().aprobada.licitacion.user or self.request.user.groups.filter(name='GERENTE_GENERAL').exists())
 
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -333,7 +382,7 @@ class ListasEnviarListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["header_page"] = "Listas Enviar"
+        context["header_page"] = "Listas para Enviar"
         context["card_title"] = "Licitaciones listas para enviar"
         context["list_url"] = reverse_lazy('seguros:listar_listasenviar')
         
@@ -351,7 +400,11 @@ class ListasEnviarListView(ListView):
 
 
 @method_decorator(csrf_exempt, name='dispatch')
-class ListasEnviarView(View):
+class ListasEnviarView(UserPassesTestMixin, View):
+    def test_func(self):
+        grupos = ['SUPERVISOR','GERENTE_SUCURSAL']  # Lista de nombres de grupos a verificar
+        pertenece_a_admin_sucursal = any(self.request.user.groups.filter(name=grupo).exists() for grupo in grupos) and self.request.user.perfil.sucursal == self.get_object().preparada.aprobada.licitacion.sucursal 
+        return self.request.user.is_authenticated and (pertenece_a_admin_sucursal or self.request.user == self.get_object().preparada.aprobada.licitacion.user or self.request.user.groups.filter(name='GERENTE_GENERAL').exists())
 
     def post(self, request, lista_id):
         try:
@@ -362,6 +415,19 @@ class ListasEnviarView(View):
             return JsonResponse({'success': True})
         except ListaEnviar.DoesNotExist:
             return JsonResponse({'success': False, 'error': 'La lista no existe.'})
+
+    
+class ListaEnviarDetailView(DetailView):
+    model = ListaEnviar
+    template_name = 'pages/listasenviar/detalle_listaenviar.html'
+    context_object_name = 'listaenviar'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["header_page"] = "Detalle Listas para Enviar"
+        context["card_title"] = f"Siniestro - {self.object.preparada.aprobada.licitacion.numero_siniestro}"
+        context["list_url"] = reverse_lazy('seguros:listar_listasenviar')
+        return context
 
 
 class EnviadaListView(ListView):
@@ -377,18 +443,6 @@ class EnviadaListView(ListView):
         context["card_title"] = "Licitaciones enviadas"
         context["list_url"] = reverse_lazy('seguros:listar_enviadas')
         return context
-    
-class ListaEnviarDetailView(DetailView):
-    model = ListaEnviar
-    template_name = 'pages/listasenviar/detalle_listaenviar.html'
-    context_object_name = 'listasenviar'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["header_page"] = "Detalle Lista Enviar"
-        context["card_title"] = f"Detalle Lista Enviar - Siniestro N°: {self.object.preparada.aprobada.licitacion.numero_siniestro}"
-        context["list_url"] = reverse_lazy('seguros:listar_listasenviar')
-        return context
 
 
 class EnviadaDetailView(DetailView):
@@ -398,41 +452,88 @@ class EnviadaDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["header_page"] = "Detalle Enviaada"
-        context["card_title"] = f"Detalle Licitación Enviaada - Siniestro N°: {self.object.listaenviar.preparada.aprobada.licitacion.numero_siniestro}"
+        context["header_page"] = "Detalle Enviada"
+        context["card_title"] = f"Siniestro - {self.object.listaenviar.preparada.aprobada.licitacion.numero_siniestro}"
         context["list_url"] = reverse_lazy('seguros:listar_enviadas')
         return context
-    
 
 
-# class BuscarListView(ListView):
-#     template_name = 'operaciones.html'
-#     model = Licitacion
-#     context_object_name = 'licitaciones'
+class EnviadaUpdateView(UserPassesTestMixin, UpdateView):
+    model = Enviada
+    form_class = EnviadaForm
+    template_name = 'pages/enviadas/editar_enviada.html'
+    success_url = reverse_lazy('seguros:listar_enviadas')
 
-#     def get_queryset(self):
-#         termino_busqueda = self.request.GET.get('termino_busqueda', '')
-#         print(termino_busqueda)
-#         licitaciones = Licitacion.objects.filter(activo=True)
-#         if termino_busqueda:
-#             licitaciones = Licitacion.objects.filter(
-#                 Q(localidad__localidad__icontains=termino_busqueda) |
-#                 Q(localidad__provincia__provincia__icontains=termino_busqueda) |
-#                 Q(dominio__icontains=termino_busqueda) |
-#                 Q(numero_siniestro__icontains=termino_busqueda) |
-#                 Q(transporte__nombre__icontains=termino_busqueda)
-#                 # Agrega más condiciones según sea necesario
-#             )
-#             print(licitaciones)
-#         return licitaciones
+    def test_func(self):
+        grupos = ['SUPERVISOR','GERENTE_SUCURSAL']  # Lista de nombres de grupos a verificar
+        pertenece_a_admin_sucursal = any(self.request.user.groups.filter(name=grupo).exists() for grupo in grupos) and self.request.user.perfil.sucursal == self.get_object().listaenviar.preparada.aprobada.licitacion.sucursal 
+        return self.request.user.is_authenticated and (pertenece_a_admin_sucursal or self.request.user == self.get_object().listaenviar.preparada.aprobada.licitacion.user or self.request.user.groups.filter(name='GERENTE_GENERAL').exists())
 
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context['operacion'] = 'Contestados'
-#         return context
+    def dispatch(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        return super().dispatch(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        data = {}
+        try:
+            accion = request.POST['accion']
+            if accion == 'editar':
+                form = self.get_form()
+                if form.is_valid():
+                    data = form.save()
+                else:
+                    # En el caso de errores, incluir detalles en el diccionario 'data'
+                    data['error'] = 'NO se guardó la licitación'
+                    data['form_errors'] = form.errors
+            else:
+                data['error'] = 'NO ha ingresado una acción válida'
+
+            # Verificar si ambos campos factura y remito están cargados
+            if 'factura' in request.POST and 'remito' in request.POST:
+                self.object.terminado = True
+                self.object.save()
+                
+        except forms.ValidationError as e:
+            data['error'] = str(e)
+        except Exception as e:
+            data['error'] = str(e)
+        return JsonResponse(data)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["header_page"] = "Enviada"
+        context["card_title"] = f"Editar Siniestro - { self.get_object().listaenviar.preparada.aprobada.licitacion.numero_siniestro}"
+        context["accion"] = "editar"
+        context["list_url"] = reverse_lazy('seguros:listar_enviadas')
+        return context
 
 
+class TerminadaListView(ListView):
+    model = Enviada
+    queryset = Enviada.objects.filter(activo=True, terminado=True, listaenviar__terminado=True, listaenviar__activo=True)
+    context_object_name = 'terminadas'
+    template_name = 'pages/terminadas/listar_terminadas.html'
+    ordering = ('-creado',)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["header_page"] = "Terminadas"
+        context["card_title"] = "Licitaciones terminadas"
+        context["list_url"] = reverse_lazy('seguros:listar_terminadas')
+        return context
+
+
+class TerminadaDetailView(DetailView):
+    model = Enviada
+    template_name = 'pages/terminadas/detalle_terminada.html'
+    context_object_name = 'enviada'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["header_page"] = "Detalle terminada"
+        context["card_title"] = f"Siniestro - {self.object.listaenviar.preparada.aprobada.licitacion.numero_siniestro}"
+        context["list_url"] = reverse_lazy('seguros:listar_terminadas')
+        return context
 
 
 class ObtenerPeritosView(ListView):

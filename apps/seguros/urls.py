@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.urls import path
-from .views import Inicio, LicitacionDetailView, LicitacionesListView, AprobadasListView, AprobadaDetailView, AprobadaUpdateView, EnviadaListView, EnviadaDetailView, LicitacionCreateView, LicitacionUpdateView, LicitacionDeleteView, ListasEnviarListView, ListasEnviarView, ListaEnviarDetailView, PreparadasListView, PreparadaDetailView, PreparadaUpdateView, ObtenerPeritosView
+from .views import Inicio, LicitacionDetailView, LicitacionesListView, AprobadasListView, AprobadaDetailView, AprobadaUpdateView, EnviadaListView, EnviadaDetailView, EnviadaUpdateView, LicitacionCreateView, LicitacionUpdateView, LicitacionDeleteView, ListasEnviarListView, ListasEnviarView, ListaEnviarDetailView, PreparadasListView, PreparadaDetailView, PreparadaUpdateView, ObtenerPeritosView, TerminadaListView, TerminadaDetailView
 
 app_name = 'apps.seguros'
 
@@ -11,7 +11,7 @@ urlpatterns = [
         view=login_required(Inicio.as_view()),
         name='inicio'
     ),
-    
+
     path(
         route='licitaciones/',
         view=login_required(LicitacionesListView.as_view()),
@@ -108,23 +108,23 @@ urlpatterns = [
         name='detalle_enviada'
     ),
 
-    # path(
-    #     route='buscar/',
-    #     view=BuscarListView.as_view(),
-    #     name='busqueda'
-    # ),
+    path(
+        route='editar_enviada/<uuid:pk>/',
+        view=login_required(EnviadaUpdateView.as_view()),
+        name='editar_enviada'
+    ),
 
-    # path(
-    #     route='detalle_contestado/<uuid:uuid>/',
-    #     view=login_required(ContestadoDetailView.as_view()),
-    #     name='detalle_contestado'
-    # ),
+    path(
+        route='terminadas/',
+        view=login_required(TerminadaListView.as_view()),
+        name='listar_terminadas'
+    ),
 
-    # path(
-    #     route='editar_contestado/<uuid:uuid>/',
-    #     view=login_required(ContestadoUpdateView.as_view()),
-    #     name='editar_contestado'
-    # ),
+    path(
+        route='detalle_terminada/<uuid:pk>/',
+        view=login_required(TerminadaDetailView.as_view()),
+        name='detalle_terminada'
+    ),
 
     path(
         route='obtener_peritos/<uuid:aseguradora_id>/',

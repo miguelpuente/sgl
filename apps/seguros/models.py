@@ -43,6 +43,7 @@ class Perito(models.Model):
     def __str__(self):
         return self.nombre.strip()
 
+
 class Transporte(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     nombre = models.CharField(max_length=150, unique=True)
@@ -61,6 +62,7 @@ class Transporte(models.Model):
 
     def __str__(self):
         return self.nombre.strip()
+
 
 class Taller(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -81,6 +83,7 @@ class Taller(models.Model):
     def __str__(self):
         return self.nombre.strip()
 
+
 class Demora(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     nombre = models.CharField(max_length=150, unique=True)
@@ -96,6 +99,7 @@ class Demora(models.Model):
 
     def __str__(self):
         return self.nombre.strip()
+
 
 class Licitacion(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -149,6 +153,7 @@ class Licitacion(models.Model):
     def __str__(self):
         return f'{self.id}'
 
+
 class Aprobada(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     licitacion = models.ForeignKey(Licitacion, on_delete=models.PROTECT)
@@ -182,6 +187,7 @@ class Aprobada(models.Model):
     def __str__(self):
         return f'{self.id}'
 
+
 class Preparada(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     aprobada = models.ForeignKey(Aprobada, on_delete=models.PROTECT)
@@ -207,6 +213,7 @@ class Preparada(models.Model):
     def __str__(self):
         return f'{self.id}'    
 
+
 class ListaEnviar(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     preparada = models.ForeignKey(Preparada, on_delete=models.PROTECT)
@@ -223,6 +230,7 @@ class ListaEnviar(models.Model):
     def __str__(self):
         return f'{self.id}'
 
+
 class Enviada(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     listaenviar = models.ForeignKey(ListaEnviar, on_delete=models.PROTECT)
@@ -237,6 +245,20 @@ class Enviada(models.Model):
         verbose_name = 'Enviada'
         verbose_name_plural = 'Enviadas'
         ordering = ['id']
+
+    def save(self, *args, **kwargs):
+        try:
+            enviada_anterior = Enviada.objects.get(pk=self.pk)
+            if enviada_anterior.remito != self.remito:
+                # Eliminar la imagen anterior si se cambia por una nueva
+                enviada_anterior.remito.delete(save=False)
+
+                # Verificar si hay factura y remito para cambiar terminado a True
+            if self.factura and self.remito:
+                self.terminado = True
+        except Enviada.DoesNotExist:
+            pass
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f'{self.id}'

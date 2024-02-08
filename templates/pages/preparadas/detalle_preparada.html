@@ -140,7 +140,7 @@
                                     <label for="inputPerito">Perito</label>
                                     <input type="text" class="form-control" 
                                     value=
-                                    {% if aprobada.licitacion.perito %}
+                                    {% if preparada.aprobada.licitacion.perito %}
                                         "{{preparada.aprobada.licitacion.perito}}" 
                                     {% else %}
                                         ""
@@ -410,7 +410,7 @@
                   <div class="card-header">
                     <h3 class="card-title">En Preparación</h3>
                     <div class="card-tools">
-                      <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
+                      <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-min|us"></i>
                       </button>
                     </div>
                     <!-- /.card-tools -->
@@ -443,7 +443,7 @@
                       <div class="col-md-9 col-xl-10">
                         <div class="form-group">
                           <label for="inputComentario">Comentario</label>
-                          <input type="text" class="form-control" value={% if preparada.comentario %}{{preparada.comentario}}{% else %}""{% endif %} >
+                          <input type="text" class="form-control" value={% if preparada.comentario %}"{{preparada.comentario}}"{% else %}""{% endif %} >
                         </div>
                       </div>
 
@@ -459,11 +459,15 @@
 
             <div class="card-footer">
               <a href={{ list_url }} class="btn btn-info btn-sm">Volver</a>
-              <a class="btn btn-warning btn-sm" href={% url "seguros:editar_preparada" preparada.id %}>
-                <i class="fas fa-pencil-alt">
-                </i>
-                Editar
-              </a>
+              {% with first_group=request.user.groups.all|first %}
+                {% if request.user == preparada.aprobada.licitacion.user or first_group.name == 'GERENTE_GENERAL' or first_group.name == 'GERENTE_SUCURSAL' and request.user.perfil.sucursal == preparada.aprobada.licitacion.sucursal or first_group.name == 'SUPERVISOR' and request.user.perfil.sucursal == preparada.aprobada.licitacion.sucursal %}
+                <a class="btn btn-warning btn-sm" href={% url "seguros:editar_preparada" preparada.id %}>
+                  <i class="fas fa-pencil-alt">
+                  </i>
+                  Editar
+                </a>
+                {% endif %}
+              {% endwith %}
             </div>
             <!-- /.card-footer -->
           </div>

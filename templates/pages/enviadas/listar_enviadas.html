@@ -6,13 +6,11 @@
 {% block columnas %}
     <tr>
         <th>Fecha Enviada</th>
-        <th>Artículos</th>
-        <th>Seguro</th>
         <th>Siniestro</th>
         <th>Localidad</th>
         <th>OC</th>
-        <th>Taller</th>
-        <th>Transporte</th>
+        <th>Factura</th>
+        <th>Remito</th>
         <th>Usuario</th>
         <th>Sucursal</th>
         <th>Acciones</th>
@@ -27,19 +25,7 @@
                     {{ enviada.creado|date:'d/m/Y' }}
                 {% endif %}
             </td>
-            
-            <td>
-                {% if enviada.listaenviar.preparada.cantidad_articulos_listos %}
-                    {{ enviada.listaenviar.preparada.cantidad_articulos_listos }}
-                {% endif %}
-            </td>
 
-            <td>
-                {% if enviada.listaenviar.preparada.aprobada.licitacion.aseguradora %}
-                    {{ enviada.listaenviar.preparada.aprobada.licitacion.aseguradora }}
-                {% endif %}
-            </td>
-            
             <td>
                 {% if enviada.listaenviar.preparada.aprobada.licitacion.numero_siniestro %}
                     {{ enviada.listaenviar.preparada.aprobada.licitacion.numero_siniestro }}
@@ -59,15 +45,19 @@
             </td>
 
             <td>
-                {% if enviada.listaenviar.preparada.aprobada.taller %}
-                    {{ enviada.listaenviar.preparada.aprobada.taller }}
+                {% if enviada.factura %}
+                    {{ enviada.factura }}
                 {% endif %}
             </td>
 
             <td>
-                {% if enviada.listaenviar.preparada.aprobada.transporte %}
-                    {{ enviada.listaenviar.preparada.aprobada.transporte }}
-                {% endif %}
+                <ul class="list-inline">
+                    {% if enviada.remito %}
+                        <li class="list-inline-item">
+                            <a href={{enviada.remito.url}} download><img alt="remito" class="table-avatar" src={{enviada.remito.url}}></a>
+                        </li>
+                    {% endif %}
+                </ul>
             </td>
 
             <td>
@@ -86,11 +76,15 @@
                 </i>
                 Ver
             </a>
-            <a class="btn btn-warning btn-sm" href="">
-                <i class="fas fa-pencil-alt">
-                </i>
-                Editar
-            </a>
+            {% with first_group=request.user.groups.all|first %}
+                {% if request.user == enviada.listaenviar.preparada.aprobada.licitacion.user or first_group.name == 'GERENTE_GENERAL' or first_group.name == 'GERENTE_SUCURSAL' and request.user.perfil.sucursal == enviada.listaenviar.preparada.aprobada.licitacion.sucursal or first_group.name == 'SUPERVISOR' and request.user.perfil.sucursal == enviada.listaenviar.preparada.aprobada.licitacion.sucursal %}
+                <a class="btn btn-warning btn-sm" href={% url "seguros:editar_enviada" enviada.id %}>
+                    <i class="fas fa-pencil-alt">
+                    </i>
+                    Editar
+                </a>
+                {% endif %}
+            {% endwith %}
         </td>
     </tr>
     {% endfor %}

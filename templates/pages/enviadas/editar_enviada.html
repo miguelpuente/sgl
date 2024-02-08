@@ -32,7 +32,7 @@
             </div>
             <!-- /.card-header -->
             <!-- form start -->
-            <form method="POST" name="form" id="id_form">
+            <form method="POST" name="form" id="id_form" enctype="multipart/form-data">
               {% csrf_token %}
 
               <input type="hidden" name='accion' value={{accion}}>
@@ -41,7 +41,7 @@
 
                     <div class="card card-primary w-100">
                       <div class="card-header">
-                        <h3 class="card-title">Operación</h3>
+                        <h3 class="card-title">Info</h3>
                         <div class="card-tools">
                           <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
                           </button>
@@ -54,27 +54,23 @@
                         <div class="row">
 
                           <div class="col-md-3 col-xl-2">
-                            <div class="col-md-12">
+                            <div class="col-md-10">
                               <div class="form-group">
-                                <label for="inputCantidadArticulosListos">Artículos Listos</label>
-                                <input type="number" class="form-control" step="any" maxlength="4" name={{form.cantidad_articulos_listos.name}} value={{form.cantidad_articulos_listos.value}} >
-                              </div>
-                            </div>
-
-                            <div class="col-md-12">
-                              <div class="form-group">
-                                <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                                  {{ form.terminado }}
-                                  <label class="custom-control-label" for="customSwitch3">Lista Enviar</label>
-                                </div>
+                                <label for="inputFactura">Factura</label>
+                                {{form.factura}}
                               </div>
                             </div>
                           </div>
 
                           <div class="col-md-9 col-xl-10">
-                            <div class="form-group">
-                              <label for="inputComentario">Comentario</label>
-                              {{form.comentario}}
+                            <div class="col-md-10">
+                              <div class="form-group">
+                                <label for="remito">Remito</label>
+                                <div class="custom-file">
+                                  <input type="file" class="custom-file-input" name="remito" accept="image/*" capture="camera">
+                                  <label class="custom-file-label" for="exampleInputFile">Seleccione imagen</label>
+                                </div>                  
+                              </div>
                             </div>
                           </div>
 
@@ -90,11 +86,7 @@
 
               <div class="card-footer">
                 <button type="submit" class="btn btn-primary" id="id_enviar">
-                  {% if accion == 'agregar' %}
-                    Crear
-                  {% else %}
                     Guardar Cambios
-                  {% endif %}
                 </button>
                 <a href={{ list_url }} class="btn btn-info">Cancelar</a>
               </div>
@@ -132,12 +124,15 @@
 
       $('form').on('submit', function (e) {
         e.preventDefault();
-        let parameters = $(this).serializeArray();
+        let formData = new FormData(this);
+
         $.ajax({
           url: window.location.pathname,
           type: 'POST',
-          data: parameters,
-          dataType: 'json'
+          data: formData,
+          dataType: 'json',
+          contentType: false,
+          processData: false
         }).done(function (data) {
           if (!data.hasOwnProperty('error')) {
             // Si no hay errores generales, redirigir
@@ -166,45 +161,6 @@
 
         });
       });
-
-      document.querySelector('[name="cantidad_articulos_listos"]').addEventListener('change', function(event) {
-        let CantidadArticulosInput = event.target;
-        let valor = CantidadArticulosInput.value;
-        let articulos = parseInt('{{ articulos }}');
-    
-        if (!/^\d+$/.test(valor) || valor.length > 4 || parseInt(valor) > articulos) {
-            alerta_error(`Artículos Listos debe ser un número positivo de no más de 4 dígitos y no mayor a ${articulos}`);
-            CantidadArticulosInput.value = '';
-            CantidadArticulosInput.focus();
-        }
-      });
-
-      $(document).ready(function(){
-        // Desactiva las flechas en todos los campos de número
-        $('input[type="number"]').on('keydown', function(e) {
-            if (e.which === 38 || e.which === 40) {
-                e.preventDefault();
-            }
-        });
-      });
-
-      document.querySelector('[name="terminado"]').addEventListener('change', function(event) {
-        var terminadoInput = event.target;
-        var cantidadArticulosListoInput = document.querySelector('[name="cantidad_articulos_listos"]');
-        var comentarioInput = document.querySelector('[name="comentario"]');
-        var cantidadArticulosListo = parseInt(cantidadArticulosListoInput.value);
-        var articulos = parseInt('{{ articulos }}');
-        
-        var validarTerminado = terminadoInput.checked;
-        var articulosListosIguales = cantidadArticulosListo === articulos;
-        var comentarioRequerido = !articulosListosIguales && cantidadArticulosListo < articulos && comentarioInput.value === '';
-    
-        if (validarTerminado && comentarioRequerido) {
-            alerta_error(`Para cambiar "Lista Enviar", "Artículos Listos" debe ser igual a ${articulos}. Si desea enviar con faltante, agregue un comentario.`);
-            terminadoInput.checked = false;
-        }
-      });
-
     });
   </script>
 {% endblock script %}

@@ -17,68 +17,72 @@
 {% endblock columnas %}
 
 {% block filas %}
-    {% for lista in listasenviar %}
+    {% for listaenviar in listasenviar %}
     <tr>
 
         <td>
-            {% if lista.preparada.aprobada.fecha_aprobado %}
-                {{ lista.preparada.aprobada.fecha_aprobado|date:'d/m/Y' }}
+            {% if listaenviar.preparada.aprobada.fecha_aprobado %}
+                {{ listaenviar.preparada.aprobada.fecha_aprobado|date:'d/m/Y' }}
             {% endif %}
         </td>
 
         <td>
-            {% if lista.preparada.aprobada.licitacion.numero_siniestro %}
-                {{ lista.preparada.aprobada.licitacion.numero_siniestro }}
+            {% if listaenviar.preparada.aprobada.licitacion.numero_siniestro %}
+                {{ listaenviar.preparada.aprobada.licitacion.numero_siniestro }}
             {% endif %}
         </td>
         
         <td>
-            {% if lista.preparada.aprobada.licitacion.aseguradora %}
-                {{ lista.preparada.aprobada.licitacion.aseguradora }}
+            {% if listaenviar.preparada.aprobada.licitacion.aseguradora %}
+                {{ listaenviar.preparada.aprobada.licitacion.aseguradora }}
             {% endif %}
         </td>
 
         <td>
-            {% if lista.preparada.aprobada.licitacion.monto %}
-                {{ lista.preparada.aprobada.licitacion.monto }}
+            {% if listaenviar.preparada.aprobada.licitacion.monto %}
+                {{ listaenviar.preparada.aprobada.licitacion.monto }}
             {% endif %}
         </td>
 
         <td>
-            {% if lista.preparada.aprobada.licitacion.datos_entrega.localidad %}
-                {{ lista.preparada.aprobada.licitacion.datos_entrega.localidad }} - 
-                {{ lista.preparada.aprobada.licitacion.datos_entrega.localidad.provincia }}
+            {% if listaenviar.preparada.aprobada.licitacion.datos_entrega.localidad %}
+                {{ listaenviar.preparada.aprobada.licitacion.datos_entrega.localidad }} - 
+                {{ listaenviar.preparada.aprobada.licitacion.datos_entrega.localidad.provincia }}
             {% endif %}
         </td>
 
 
         <td>
-            {% if lista.preparada.aprobada.transporte %}
-                {{ lista.preparada.aprobada.transporte }}
+            {% if listaenviar.preparada.aprobada.transporte %}
+                {{ listaenviar.preparada.aprobada.transporte }}
             {% endif %}
         </td>
 
         <td>
-            {% if lista.preparada.cantidad_articulos_listos %}
-                {{ lista.preparada.cantidad_articulos_listos }}
+            {% if listaenviar.preparada.cantidad_articulos_listos %}
+                {{ listaenviar.preparada.cantidad_articulos_listos }}
             {% endif %}
         </td>
 
         <td>
-            {{ lista.dias_restantes|default:"No disponible" }}
+            {{ listaenviar.dias_restantes|default:"No disponible" }}
         </td>
 
         <td class="project-actions text-right">
-            <a class="btn btn-primary btn-sm" href={% url "seguros:detalle_listaenviar" lista.id %}>
+            <a class="btn btn-primary btn-sm" href={% url "seguros:detalle_listaenviar" listaenviar.id %}>
                 <i class="fas fa-folder">
                 </i>
                 Ver
             </a>
-            <button class="btn btn-success btn-sm btn-aprobar" data-lista-id="{{ lista.id }}" data-siniestro="{{ lista.preparada.aprobada.licitacion.numero_siniestro }}">
-                <i class="fa fa-truck">
-                </i>
-                Enviar
-            </button>
+            {% with first_group=request.user.groups.all|first %}
+                {% if request.user == listaenviar.preparada.aprobada.licitacion.user or first_group.name == 'GERENTE_GENERAL' or first_group.name == 'GERENTE_SUCURSAL' and request.user.perfil.sucursal == listaenviar.preparada.aprobada.licitacion.sucursal or first_group.name == 'SUPERVISOR' and request.user.perfil.sucursal == listaenviar.preparada.aprobada.licitacion.sucursal %}
+                    <button class="btn btn-success btn-sm btn-aprobar" data-lista-id="{{ listaenviar.id }}" data-siniestro="{{ listaenviar.preparada.aprobada.licitacion.numero_siniestro }}">
+                        <i class="fa fa-truck">
+                        </i>
+                        Enviar
+                    </button>
+                {% endif %}
+            {% endwith %}
         </td>
     </tr>
     {% endfor %}

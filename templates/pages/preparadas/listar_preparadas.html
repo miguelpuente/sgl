@@ -74,11 +74,15 @@
                 </i>
                 Ver
             </a>
-            <a class="btn btn-warning btn-sm" href={% url "seguros:editar_preparada" preparada.id %}>
-                <i class="fas fa-pencil-alt">
-                </i>
-                Editar
-            </a>
+            {% with first_group=request.user.groups.all|first %}
+                {% if request.user == preparada.aprobada.licitacion.user or first_group.name == 'GERENTE_GENERAL' or first_group.name == 'GERENTE_SUCURSAL' and request.user.perfil.sucursal == preparada.aprobada.licitacion.sucursal or first_group.name == 'SUPERVISOR' and request.user.perfil.sucursal == preparada.aprobada.licitacion.sucursal %}
+                <a class="btn btn-warning btn-sm" href={% url "seguros:editar_preparada" preparada.id %}>
+                    <i class="fas fa-pencil-alt">
+                    </i>
+                    Editar
+                </a>
+                {% endif %}
+            {% endwith %}
         </td>
     </tr>
     {% endfor %}

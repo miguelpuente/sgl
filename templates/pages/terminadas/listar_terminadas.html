@@ -1,0 +1,74 @@
+{% extends "includes/componentes/listado.html" %}
+
+{% load static %}
+{% load humanize %}
+
+{% block columnas %}
+    <tr>
+        <th>Fecha</th>
+        <th>Siniestro</th>
+        <th>Factura</th>
+        <th>Remito</th>
+        <th>Usuario</th>
+        <th>Sucursal</th>
+        <th>Acciones</th>
+    </tr>
+{% endblock columnas %}
+
+{% block filas %}
+    {% for terminada in terminadas %}
+    <tr>
+            <td>
+                {% if terminada.actualizado %}
+                    {{ terminada.actualizado|date:'d/m/Y' }}
+                {% endif %}
+            </td>
+
+            <td>
+                {% if terminada.listaenviar.preparada.aprobada.licitacion.numero_siniestro %}
+                    {{ terminada.listaenviar.preparada.aprobada.licitacion.numero_siniestro }}
+                {% endif %}
+            </td>
+
+            <td>
+                {% if terminada.factura %}
+                    {{ terminada.factura }}
+                {% endif %}
+            </td>
+
+            <td>
+                <ul class="list-inline">
+                    {% if terminada.remito %}
+                        <li class="list-inline-item">
+                            <a href={{terminada.remito.url}} download><img alt="remito" class="table-avatar" src={{terminada.remito.url}}></a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </td>
+
+            <td>
+                {{ terminada.listaenviar.preparada.aprobada.licitacion.user }}
+            </td>
+
+            <td>
+                {% if terminada.listaenviar.preparada.aprobada.licitacion.sucursal %}
+                    {{ terminada.listaenviar.preparada.aprobada.licitacion.sucursal }}
+                {% endif %}
+            </td>
+
+        <td class="project-actions text-right">
+            <a class="btn btn-primary btn-sm" href={% url "seguros:detalle_terminada" terminada.id %}>
+                <i class="fas fa-folder">
+                </i>
+                Ver
+            </a>
+            {% comment %}
+            <a class="btn btn-warning btn-sm" href={% url "seguros:editar_terminada" terminada.id %}>
+                <i class="fas fa-pencil-alt">
+                </i>
+                Editar
+            </a> {% endcomment %}
+        </td>
+    </tr>
+    {% endfor %}
+{% endblock filas %}

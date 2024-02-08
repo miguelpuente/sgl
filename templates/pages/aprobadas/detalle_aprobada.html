@@ -403,11 +403,15 @@
 
           <div class="card-footer">
             <a href={{ list_url }} class="btn btn-info btn-sm">Volver</a>
-            <a class="btn btn-warning btn-sm" href={% url "seguros:editar_aprobada" aprobada.id %}>
-              <i class="fas fa-pencil-alt">
-              </i>
-              Editar
-            </a>
+            {% with first_group=request.user.groups.all|first %}
+              {% if request.user == aprobada.licitacion.user or first_group.name == 'GERENTE_GENERAL' or first_group.name == 'GERENTE_SUCURSAL' and request.user.perfil.sucursal == aprobada.licitacion.sucursal or first_group.name == 'SUPERVISOR' and request.user.perfil.sucursal == aprobada.licitacion.sucursal %}
+                <a class="btn btn-warning btn-sm" href={% url "seguros:editar_aprobada" aprobada.id %}>
+                  <i class="fas fa-pencil-alt">
+                  </i>
+                  Editar
+                </a>
+              {% endif %}
+            {% endwith %}
           </div>
           <!-- /.card-footer -->
 

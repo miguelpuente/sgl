@@ -1,9 +1,10 @@
+import re
 from django import forms
 from apps.auto.models import Modelo
 from apps.direccion.models import DatoEntrega, Localidad, Provincia
-from .models import Licitacion, Aprobada, Demora, Aseguradora, Perito, Preparada, Taller, Transporte
+from .models import Licitacion, Aprobada, Demora, Enviada, Aseguradora, Perito, Preparada, Taller, Transporte
 
-class LicitacioForm(forms.ModelForm):
+class LicitacionForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -124,16 +125,17 @@ class LicitacioForm(forms.ModelForm):
         queryset= Aseguradora.objects.filter(activo=True),
         widget=forms.Select(
             attrs={
-                'class': 'form-control select2',
+                'class': 'form-control',
+                'name': 'aseguradora'
             }
         )
     )
 
     perito = forms.ModelChoiceField(
-        queryset= Perito.objects.filter(activo=True),
+        queryset= Perito.objects.all(),
         widget=forms.Select(
             attrs={
-                'class': 'form-control select2',
+                'class': 'form-control',
             }
         ),
         required=False
@@ -161,7 +163,7 @@ class LicitacioForm(forms.ModelForm):
         queryset= Provincia.objects.all(),
         widget=forms.Select(
             attrs={
-                'class': 'form-control select2',
+                'class': 'form-control',
                 'required': True,
             }
         )
@@ -171,7 +173,7 @@ class LicitacioForm(forms.ModelForm):
         queryset= Localidad.objects.all(),
         widget=forms.Select(
             attrs={
-                'class': 'form-control select2',
+                'class': 'form-control',
                 'required': True,
             }
         )
@@ -306,6 +308,7 @@ class AprobadaForm(forms.ModelForm):
             data['error'] = str(e)
         return data
 
+
 class PreparadaForm(forms.ModelForm):
     class Meta:
         model = Preparada
@@ -329,7 +332,7 @@ class PreparadaForm(forms.ModelForm):
         if numero is not None and numero < 0:
             raise forms.ValidationError('El número debe ser positivo.')
         return numero
-    
+
     comentario = forms.CharField(
         widget=forms.Textarea(
             attrs={
@@ -359,14 +362,53 @@ class PreparadaForm(forms.ModelForm):
 
         articulos = self.instance.aprobada.licitacion.cantidad_articulos
         
-        if terminado and (
-        (cantidad_articulos_listo is not None and cantidad_articulos_listo != articulos and cantidad_articulos_listo <= 0) or
-        not comentario):
-            self.add_error('comentario', forms.ValidationError(
-            f'Para cambiar "Lista Enviar", "Artículos Listos" debe ser igual a {articulos}. Si desea enviar con faltante, agregue un comentario'
-        ))
+        if terminado:
+            if cantidad_articulos_listo is not None:
+                if (cantidad_articulos_listo != articulos and cantidad_articulos_listo <= 0) or(cantidad_articulos_listo < articulos and not comentario):
+                    self.add_error('comentario', forms.ValidationError(
+                        f'Para cambiar "Lista Enviar", "Artículos Listos" debe ser igual a {articulos}. Si desea enviar con faltante, agregue un comentario'
+                    ))
 
         return cleaned_data
+
+    def save(self, commit=True):
+        data={}
+        form = super()
+        try:
+            if form.is_valid():
+                form.save()
+            else:
+                data['error'] = form.errors
+        except Exception as e:
+            data['error'] = str(e)
+        return data
+
+    
+# Definir una función de validación personalizada
+def validate_factura_format(value):
+    # Definir el patrón de expresión regular para el formato de factura
+    pattern = r'^A-\d{1,4}-\d{1,8}$'
+    if not re.match(pattern, value):
+        raise forms.ValidationError('El formato de la factura debe ser A-XXXX-XXXXXXXX')
+
+# Definir el formulario con el campo de factura
+class EnviadaForm(forms.ModelForm):
+    class Meta:
+        model = Enviada
+        fields = ['factura', 'remito']
+
+    factura = forms.CharField(
+        max_length = 20,
+        required=False,
+        validators = [validate_factura_format],
+        widget = forms.TextInput(
+            attrs={
+                'placeholder': 'A-0000-00000000'
+            }
+        )
+    )
+    
+    remito = forms.ImageField(label='Remito')
 
     def save(self, commit=True):
         data={}
