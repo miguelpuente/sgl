@@ -112,7 +112,10 @@
                             url: '/enviar_listasenviar/' + listaId + '/',
                             type: 'POST',
                             data: '',
-                            dataType: 'json'
+                            dataType: 'json',
+                            headers: {
+                                'X-CSRFToken': csrftoken
+                            }
                         }).done(function (data) {
                             if (data.success) {
                                 // Puedes redirigir a una nueva URL si es necesario

@@ -399,20 +399,18 @@ class ListasEnviarListView(ListView):
         return context
 
 
-@method_decorator(csrf_exempt, name='dispatch')
-class ListasEnviarView(UserPassesTestMixin, View):
-    def test_func(self):
-        grupos = ['SUPERVISOR','GERENTE_SUCURSAL']  # Lista de nombres de grupos a verificar
-        pertenece_a_admin_sucursal = any(self.request.user.groups.filter(name=grupo).exists() for grupo in grupos) and self.request.user.perfil.sucursal == self.get_object().preparada.aprobada.licitacion.sucursal 
-        return self.request.user.is_authenticated and (pertenece_a_admin_sucursal or self.request.user == self.get_object().preparada.aprobada.licitacion.user or self.request.user.groups.filter(name='GERENTE_GENERAL').exists())
+class ListasEnviarView(View):
 
     def post(self, request, lista_id):
         try:
             lista = ListaEnviar.objects.get(id=lista_id)
-            lista.terminado = True
-            lista.save()
-            Enviada.objects.create(listaenviar=lista).save()
-            return JsonResponse({'success': True})
+            grupos = ['SUPERVISOR','GERENTE_SUCURSAL']  # Lista de nombres de grupos a verificar
+            pertenece_a_admin_sucursal = any(self.request.user.groups.filter(name=grupo).exists() for grupo in grupos) and self.request.user.perfil.sucursal == lista.preparada.aprobada.licitacion.sucursal 
+            if self.request.user.is_authenticated and (pertenece_a_admin_sucursal or self.request.user == lista.preparada.aprobada.licitacion.user or self.request.user.groups.filter(name='GERENTE_GENERAL').exists()):
+                lista.terminado = True
+                lista.save()
+                Enviada.objects.create(listaenviar=lista).save()
+                return JsonResponse({'success': True})
         except ListaEnviar.DoesNotExist:
             return JsonResponse({'success': False, 'error': 'La lista no existe.'})
 
