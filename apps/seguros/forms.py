@@ -17,13 +17,11 @@ class LicitacionForm(forms.ModelForm):
         model = Licitacion
         fields = ['numero_siniestro', 'user', 'sucursal', 'aseguradora', 'perito', 'demora', 'vehiculo', 'dominio', 'numero_presupuesto', 'cantidad_articulos', 'monto','costo_transporte', 'terminado', 'datos_entrega' ]
 
-    numero_siniestro = forms.DecimalField(
-        widget=forms.NumberInput(
+    numero_siniestro = forms.CharField(
+        widget=forms.TextInput(
             attrs={
                 'class': 'form-control',
-                'step': 'any',
                 'maxlength': 20,
-                'decimal_places': 0,
                 'autocomplete': False,
             }
         )
@@ -31,8 +29,8 @@ class LicitacionForm(forms.ModelForm):
 
     def clean_numero_siniestro(self):
         numero = self.cleaned_data.get('numero_siniestro')
-        if numero is not None and numero < 0:
-            raise forms.ValidationError('El número debe ser positivo.')
+        if len(numero) > 20:
+            raise forms.ValidationError('No debe tener más de 20 dígitos')
         return numero
 
     demora = forms.ModelChoiceField(

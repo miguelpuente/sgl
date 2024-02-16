@@ -425,8 +425,8 @@
         let numeroSiniestroInput = event.target;
         let valor = numeroSiniestroInput.value;
 
-        if (!/^\d+$/.test(valor) || valor.length > 20) {
-            alerta_error('Número de Siniestro debe ser un número positivo de no más de 20 dígitos');
+        if (valor.length > 20) {
+            alerta_error('Número de Siniestro no debe tener más de 20 dígitos');
             numeroSiniestroInput.value = '';
             numeroSiniestroInput.focus();
         }

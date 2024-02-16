@@ -103,10 +103,8 @@ class Demora(models.Model):
 
 class Licitacion(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    numero_siniestro = models.DecimalField(
-        max_digits=20,
-        decimal_places=0,
-        validators=[MinValueValidator(0)],
+    numero_siniestro = models.CharField(
+        max_length=20,
     )
     user = models.ForeignKey(User, on_delete=models.PROTECT)
     sucursal = models.ForeignKey(Sucursal, on_delete=models.PROTECT)

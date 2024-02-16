@@ -71,7 +71,6 @@ class LicitacionCreateView(CreateView):
             accion = request.POST['accion']
             if accion == 'agregar':
                 form = self.get_form()
-                print(form)
                 if form.is_valid():
                     # Crea el objeto DatoEntrega
                     nuevo_dato_entrega = DatoEntrega.objects.create(localidad=form.cleaned_data['localidad'])
