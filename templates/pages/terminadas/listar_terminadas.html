@@ -40,7 +40,9 @@
                 <ul class="list-inline">
                     {% if terminada.remito %}
                         <li class="list-inline-item">
-                            <a href={{terminada.remito.url}} download><img alt="remito" class="table-avatar" src={{terminada.remito.url}}></a>
+                            <a href="{{ terminada.remito.url }}" download>
+                                <img alt="remito" class="table-avatar" src="{{ terminada.remito.url }}">
+                            </a>
                         </li>
                     {% endif %}
                 </ul>

@@ -146,6 +146,10 @@ class LicitacionUpdateView(UserPassesTestMixin, UpdateView):
             if accion == 'editar':
                 form = self.get_form()
                 if form.is_valid():
+                    # Mantener al mismo usuario creador si no es el que está editando
+                    if self.request.user != self.get_object().user:
+                        form.instance.user = self.get_object().user
+
                     localidad = DatoEntrega.objects.get(id = form.instance.datos_entrega_id)
                     localidad.localidad = form.cleaned_data['localidad']
                     localidad.save()
