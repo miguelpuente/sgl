@@ -490,7 +490,9 @@
                       <div class="col-md-8 col-xl-10">
                         <div class="col-sm-12">
                           {% if enviada.remito %}
-                            <a href={{enviada.remito.url}} download><img class="img-fluid" src="{{enviada.remito.url}}" alt="Photo" disabled></a>
+                              <a href="{{enviada.remito.url}}" download>
+                                <img class="attachment-img" src="{{enviada.remito.url}}" alt="Attachment Image">
+                              </a>
                           {% endif %}
                         </div>
                       </div>
